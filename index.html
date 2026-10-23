@@ -7,12 +7,15 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>EESSI Pensjon · Dokumentasjon</title>
     <script>
-      // Apply the stored theme before first paint to avoid a flash.
+      // Apply the stored theme and sidebar state before first paint to avoid a flash.
       (function () {
         try {
           var pref = localStorage.getItem("ep-docs-theme") || "system";
           var dark = pref === "dark" || (pref === "system" && matchMedia("(prefers-color-scheme: dark)").matches);
           document.documentElement.classList.add(dark ? "dark" : "light");
+          if (localStorage.getItem("ep-docs-sidebar") === "collapsed") {
+            document.documentElement.setAttribute("data-sidebar", "collapsed");
+          }
         } catch (e) {
           document.documentElement.classList.add("light");
         }
