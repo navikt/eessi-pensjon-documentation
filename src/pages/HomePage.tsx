@@ -12,6 +12,7 @@ import {
   TasklistIcon,
 } from "@navikt/aksel-icons";
 import { INTERNAL_PAGES } from "../lib/navigation";
+import { LIBRARY_COUNT, SERVICE_COUNT } from "../lib/applications";
 import { ApiStatus } from "../components/ApiStatus";
 
 const CAPABILITIES = [
@@ -63,8 +64,8 @@ const CAPABILITIES = [
 ];
 
 const FACTS = [
-  { value: "11", label: "applikasjoner" },
-  { value: "5", label: "delte biblioteker" },
+  { value: String(SERVICE_COUNT), label: "applikasjoner" },
+  { value: String(LIBRARY_COUNT), label: "delte biblioteker" },
   { value: "2", label: "fagsystemer: Pesys og Gjenny" },
 ];
 

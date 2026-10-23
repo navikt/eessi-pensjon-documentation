@@ -46,7 +46,6 @@ export const NAV_SECTIONS: NavSection[] = [
         label: "Applikasjoner",
         Icon: ComponentIcon,
         description: "Hver tjeneste og hvert bibliotek: ansvar, avhengigheter og hvor koden ligger.",
-        comingSoon: true,
       },
       {
         href: "/sed-og-buc",

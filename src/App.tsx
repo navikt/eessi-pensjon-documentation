@@ -7,6 +7,7 @@ import { useResolvedTheme } from "./lib/theme";
 import { useCurrentUser } from "./lib/user";
 import { HomePage } from "./pages/HomePage";
 import { StatusPage } from "./pages/StatusPage";
+import { ApplicationsPage } from "./pages/ApplicationsPage";
 import { ComingSoonPage, NotFoundPage } from "./pages/ComingSoonPage";
 
 function CurrentPage({ pathname }: { pathname: string }) {
@@ -14,6 +15,7 @@ function CurrentPage({ pathname }: { pathname: string }) {
   if (!page) return <NotFoundPage />;
   if (page.href === "/") return <HomePage />;
   if (page.href === "/status") return <StatusPage />;
+  if (page.href === "/applikasjoner") return <ApplicationsPage />;
   return <ComingSoonPage page={page} />;
 }
 
