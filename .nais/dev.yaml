@@ -1,0 +1,16 @@
+name: eessi-pensjon-documentation
+ingresses:
+  - https://eessi-pensjon-documentation.intern.dev.nav.no
+  - https://eessi-pensjon-documentation.ansatt.dev.nav.no
+replicas:
+  min: 1
+  max: 1
+resources:
+  limits:
+    memory: 256Mi
+  requests:
+    cpu: 20m
+    memory: 128Mi
+api:
+  name: eessi-pensjon-documentation-api
+  scope: dev-gcp:eessipensjon:eessi-pensjon-documentation-api

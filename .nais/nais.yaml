@@ -1,0 +1,58 @@
+kind: Application
+apiVersion: nais.io/v1alpha1
+metadata:
+  name: {{ name }}
+  namespace: eessipensjon
+  labels:
+    team: eessipensjon
+spec:
+  image: {{ image }}
+  port: 3000
+  ingresses:
+  {{#each ingresses}}
+    - {{ this }}
+  {{/each}}
+  liveness:
+    path: /internal/isalive
+    initialDelay: 5
+  readiness:
+    path: /internal/isready
+    initialDelay: 5
+  replicas:
+    min: {{ replicas.min }}
+    max: {{ replicas.max }}
+  resources:
+    limits:
+      memory: {{ resources.limits.memory }}
+    requests:
+      cpu: {{ resources.requests.cpu }}
+      memory: {{ resources.requests.memory }}
+  azure:
+    application:
+      enabled: true
+      allowAllUsers: true
+      claims:
+        extra:
+          - "NAVident"
+    sidecar:
+      enabled: true
+      autoLogin: true
+      autoLoginIgnorePaths:
+        - /internal/*
+  accessPolicy:
+    outbound:
+      rules:
+        - application: {{ api.name }}
+  observability:
+    autoInstrumentation:
+      enabled: true
+      runtime: nodejs
+    logging:
+      destinations:
+        - id: elastic
+        - id: loki
+  env:
+    - name: DOCUMENTATION_API_URL
+      value: http://{{ api.name }}
+    - name: DOCUMENTATION_API_SCOPE
+      value: {{ api.scope }}
