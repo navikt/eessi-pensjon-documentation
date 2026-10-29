@@ -95,7 +95,7 @@ export function UserMenu({
               Bytt konto
             </ActionMenu.Item>
             <ActionMenu.Divider />
-            <ActionMenu.Item as="a" href="/oauth2/logout" variant="danger" icon={<LeaveIcon aria-hidden />}>
+            <ActionMenu.Item as="a" href="/oauth2/logout?redirect=%2F" variant="danger" icon={<LeaveIcon aria-hidden />}>
               Logg ut
             </ActionMenu.Item>
           </ActionMenu.Content>
