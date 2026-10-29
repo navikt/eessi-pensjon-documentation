@@ -1,7 +1,9 @@
 import { BodyLong, Heading, Link } from "@navikt/ds-react";
 import { ApiStatus } from "../components/ApiStatus";
+import { RequireLogin } from "../components/RequireLogin";
+import type { UserState } from "../lib/user";
 
-export function StatusPage() {
+export function StatusPage({ user }: { user: UserState }) {
   return (
     <article className="ep-page ep-page--narrow">
       <Heading level="1" size="xlarge" spacing>
@@ -12,7 +14,9 @@ export function StatusPage() {
         innloggingstokenet ditt til et on-behalf-of-token via Texas før kallet sendes videre, så en grønn
         status betyr at hele kjeden — Wonderwall, tokenveksling og API — virker.
       </BodyLong>
-      <ApiStatus />
+      <RequireLogin user={user}>
+        <ApiStatus />
+      </RequireLogin>
       <BodyLong className="ep-page__footnote" size="small">
         Les mer om{" "}
         <Link href="https://doc.nais.io/auth/entra-id/" target="_blank" rel="noreferrer">

@@ -176,10 +176,18 @@ describe("nais mode", () => {
     assert.equal(apiCalls().length, 0);
   });
 
-  test("redirects page loads without a valid session to login", async () => {
+  test("serves documentation pages without a session", async () => {
+    const res = await call(handler, "/applikasjoner");
+    assert.equal(res.status, 200);
+    assert.match(res.text, /<title>EP<\/title>/);
+    assert.equal(calls.length, 0);
+  });
+
+  test("redirects protected pages without a valid session to login", async () => {
     const res = await call(handler, "/status?x=1");
     assert.equal(res.status, 302);
     assert.equal(res.headers.location, "/oauth2/login?redirect=%2Fstatus%3Fx%3D1");
+    assert.equal((await call(handler, "/status/", { token: "expired" })).status, 302);
   });
 
   test("serves the app with a valid session", async () => {

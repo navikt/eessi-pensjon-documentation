@@ -33,6 +33,13 @@ export function useCurrentUser(): UserState {
   return state;
 }
 
+/** Wonderwall login URL that returns the user to `pathname` afterwards. */
+export function loginHref(pathname: string, selectAccount = false): string {
+  const params = new URLSearchParams({ redirect: pathname || "/" });
+  if (selectAccount) params.set("prompt", "select_account");
+  return `/oauth2/login?${params.toString()}`;
+}
+
 /** Entra ID names at Nav are "Etternavn, Fornavn" — show them naturally. */
 export function displayName(name: string): string {
   const [last, first] = name.split(",").map((s) => s.trim());

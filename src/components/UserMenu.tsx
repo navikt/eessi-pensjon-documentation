@@ -7,15 +7,9 @@ import {
   LeaveIcon,
   PersonIcon,
 } from "@navikt/aksel-icons";
-import { displayName, initials, type UserState } from "../lib/user";
+import { displayName, initials, loginHref, type UserState } from "../lib/user";
 import { usePathname } from "../lib/router";
 import { ThemeToggle } from "./ThemeToggle";
-
-function loginHref(pathname: string, selectAccount = false): string {
-  const params = new URLSearchParams({ redirect: pathname || "/" });
-  if (selectAccount) params.set("prompt", "select_account");
-  return `/oauth2/login?${params.toString()}`;
-}
 
 /** Bottom-of-sidebar profile area: who is logged in, account actions and theme. */
 export function UserMenu({

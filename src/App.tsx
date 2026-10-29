@@ -4,17 +4,17 @@ import { Sidebar } from "./components/Sidebar";
 import { findPage } from "./lib/navigation";
 import { installLinkInterception, usePathname } from "./lib/router";
 import { useResolvedTheme } from "./lib/theme";
-import { useCurrentUser } from "./lib/user";
+import { useCurrentUser, type UserState } from "./lib/user";
 import { HomePage } from "./pages/HomePage";
 import { StatusPage } from "./pages/StatusPage";
 import { ApplicationsPage } from "./pages/ApplicationsPage";
 import { ComingSoonPage, NotFoundPage } from "./pages/ComingSoonPage";
 
-function CurrentPage({ pathname }: { pathname: string }) {
+function CurrentPage({ pathname, user }: { pathname: string; user: UserState }) {
   const page = findPage(pathname);
   if (!page) return <NotFoundPage />;
-  if (page.href === "/") return <HomePage />;
-  if (page.href === "/status") return <StatusPage />;
+  if (page.href === "/") return <HomePage user={user} />;
+  if (page.href === "/status") return <StatusPage user={user} />;
   if (page.href === "/applikasjoner") return <ApplicationsPage />;
   return <ComingSoonPage page={page} />;
 }
@@ -39,7 +39,7 @@ export function App() {
         </a>
         <Sidebar user={user} />
         <main id="main" className="ep-main" tabIndex={-1}>
-          <CurrentPage pathname={pathname} />
+          <CurrentPage pathname={pathname} user={user} />
         </main>
       </div>
     </Theme>

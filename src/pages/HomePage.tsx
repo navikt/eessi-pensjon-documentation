@@ -14,6 +14,8 @@ import {
 import { INTERNAL_PAGES } from "../lib/navigation";
 import { LIBRARY_COUNT, SERVICE_COUNT } from "../lib/applications";
 import { ApiStatus } from "../components/ApiStatus";
+import { RequireLogin } from "../components/RequireLogin";
+import type { UserState } from "../lib/user";
 
 const CAPABILITIES = [
   {
@@ -76,7 +78,7 @@ const TERMS = [
   { term: "RINA", text: "Saksbehandlingssystemet hvert land bruker for å sende og motta SED-er." },
 ];
 
-export function HomePage() {
+export function HomePage({ user }: { user: UserState }) {
   const upcoming = INTERNAL_PAGES.filter((p) => p.comingSoon);
 
   return (
@@ -214,7 +216,9 @@ export function HomePage() {
         <Heading level="2" size="small" id="tilkobling" spacing>
           Tilkobling
         </Heading>
-        <ApiStatus />
+        <RequireLogin user={user}>
+          <ApiStatus />
+        </RequireLogin>
       </section>
     </article>
   );
