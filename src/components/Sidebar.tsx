@@ -5,6 +5,7 @@ import {
   ExternalLinkIcon,
   MenuHamburgerIcon,
   PadlockLockedIcon,
+  PadlockUnlockedIcon,
   XMarkIcon,
 } from "@navikt/aksel-icons";
 import { NAV_SECTIONS, isActive, type NavItem } from "../lib/navigation";
@@ -44,10 +45,10 @@ function RailTip({ rail, content, children }: { rail: boolean; content: string; 
   );
 }
 
-function hint(item: NavItem): string {
+function hint(item: NavItem, loggedIn: boolean): string {
   if (item.external) return `${item.label} (åpnes i ny fane)`;
   if (item.comingSoon) return `${item.label} · kommer snart`;
-  if (item.requiresLogin) return `${item.label} · krever innlogging`;
+  if (item.requiresLogin) return `${item.label} · ${loggedIn ? "du er innlogget" : "krever innlogging"}`;
   return item.label;
 }
 
@@ -58,6 +59,7 @@ export function Sidebar({ user }: { user: UserState }) {
   const desktop = useDesktop();
   // The icon-only rail only exists on wide screens; the mobile menu is unaffected.
   const rail = collapsed && desktop;
+  const loggedIn = user.status === "authenticated";
 
   // Close the mobile menu after navigating.
   useEffect(() => setOpen(false), [pathname]);
@@ -132,7 +134,7 @@ export function Sidebar({ user }: { user: UserState }) {
                   const active = isActive(pathname, item);
                   return (
                     <li key={item.href}>
-                      <RailTip rail={rail} content={hint(item)}>
+                      <RailTip rail={rail} content={hint(item, loggedIn)}>
                         <a
                           href={item.href}
                           className={"ep-sidebar__link" + (active ? " ep-sidebar__link--active" : "")}
@@ -145,9 +147,12 @@ export function Sidebar({ user }: { user: UserState }) {
                             <ExternalLinkIcon title="åpnes i ny fane" className="ep-sidebar__trail" />
                           )}
                           {item.comingSoon && <span className="ep-sidebar__soon">Snart</span>}
-                          {item.requiresLogin && (
-                            <PadlockLockedIcon title="krever innlogging" className="ep-sidebar__trail" />
-                          )}
+                          {item.requiresLogin &&
+                            (loggedIn ? (
+                              <PadlockUnlockedIcon title="du er innlogget" className="ep-sidebar__trail" />
+                            ) : (
+                              <PadlockLockedIcon title="krever innlogging" className="ep-sidebar__trail" />
+                            ))}
                         </a>
                       </RailTip>
                     </li>
