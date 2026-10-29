@@ -9,7 +9,11 @@ function subscribeReducedMotion(callback: () => void) {
 }
 
 export function usePrefersReducedMotion(): boolean {
-  return useSyncExternalStore(subscribeReducedMotion, () => window.matchMedia(REDUCED_MOTION).matches);
+  return useSyncExternalStore(
+    subscribeReducedMotion,
+    () => window.matchMedia(REDUCED_MOTION).matches,
+    () => false,
+  );
 }
 
 /**

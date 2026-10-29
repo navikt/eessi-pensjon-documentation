@@ -2878,6 +2878,246 @@ html.dark .ep-map__node--external rect {
   }
 }
 
+/* System landscape: the whole system on one map */
+.ep-land__svg {
+  display: block;
+  width: 100%;
+  min-width: 940px;
+  height: auto;
+}
+
+.ep-land__zone {
+  fill: var(--ax-bg-neutral-soft);
+  fill-opacity: 0.6;
+  stroke: var(--ax-border-neutral);
+  stroke-dasharray: 5 5;
+}
+
+.ep-land__zone--ep {
+  fill: var(--ax-bg-default);
+  fill-opacity: 1;
+  stroke: var(--ax-border-accent);
+  stroke-dasharray: none;
+  stroke-width: 1.5;
+}
+
+.ep-land__zone-title {
+  fill: var(--ax-text-neutral);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.ep-land__zone-sub {
+  fill: var(--ax-text-neutral-subtle);
+  font-size: 11px;
+}
+
+.ep-land__zone-sub--strong {
+  font-weight: 700;
+}
+
+.ep-land__band {
+  fill: var(--tone-soft);
+  fill-opacity: 0.55;
+  stroke: var(--tone-line);
+  stroke-opacity: 0.35;
+}
+
+.ep-land__band-label {
+  fill: var(--tone-text);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+}
+
+.ep-land__route-label {
+  fill: var(--ax-text-neutral-subtle);
+  font-size: 11px;
+}
+
+.ep-land__edges {
+  pointer-events: none;
+}
+
+.ep-land__edge {
+  fill: none;
+  stroke: var(--ax-border-neutral-strong);
+  stroke-width: 1.5;
+  opacity: 0.75;
+  transition:
+    opacity 180ms,
+    stroke-width 180ms;
+}
+
+.ep-land__edge--event {
+  stroke: var(--ax-border-meta-purple);
+  stroke-dasharray: 5 4;
+  animation: ep-land-flow 1.6s linear infinite;
+}
+
+.ep-land__edge.is-faint {
+  opacity: 0.16;
+}
+
+.ep-land[data-active] .ep-land__edge {
+  opacity: 0.06;
+}
+
+.ep-land[data-active] .ep-land__edge.is-on {
+  stroke: var(--tone-strong);
+  stroke-width: 2.25;
+  opacity: 1;
+}
+
+.ep-land__head {
+  fill: var(--ax-border-neutral-strong);
+}
+
+.ep-land__head--event {
+  fill: var(--ax-border-meta-purple);
+}
+
+.ep-land__head--on {
+  fill: var(--ax-text-neutral);
+}
+
+.ep-land__packet {
+  fill: var(--tone-strong);
+  stroke: var(--ax-bg-default);
+  stroke-width: 2;
+}
+
+.ep-land[data-active] .ep-land__packets {
+  display: none;
+}
+
+.ep-land__node {
+  cursor: pointer;
+  outline: none;
+  transition: opacity 180ms;
+}
+
+.ep-land__pop {
+  transform-box: fill-box;
+  transition: transform 180ms var(--ep-ease);
+}
+
+.ep-land__node:hover .ep-land__pop,
+.ep-land__node.is-active .ep-land__pop {
+  transform: translateY(-2px);
+}
+
+.ep-land__box {
+  fill: var(--ax-bg-raised);
+  stroke: var(--tone-line);
+  stroke-width: 1.25;
+  transition:
+    stroke 150ms,
+    stroke-width 150ms;
+}
+
+.ep-land__node--topic .ep-land__box {
+  fill: var(--tone-soft);
+}
+
+.ep-land__node--system .ep-land__box,
+.ep-land__node--actor .ep-land__box {
+  stroke-dasharray: 4 3;
+}
+
+.ep-land__node:hover .ep-land__box,
+.ep-land__node.is-active .ep-land__box {
+  stroke: var(--tone-strong);
+  stroke-width: 2;
+}
+
+.ep-land__node:focus-visible .ep-land__box {
+  stroke: var(--ax-border-focus);
+  stroke-width: 3;
+  stroke-dasharray: none;
+}
+
+.ep-land[data-active] .ep-land__node:not(.is-near) {
+  opacity: 0.3;
+}
+
+.ep-land__icon-bg {
+  fill: var(--tone-soft);
+}
+
+.ep-land__icon {
+  color: var(--tone-text);
+}
+
+.ep-land__label {
+  fill: var(--ax-text-neutral);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.ep-land__sub {
+  fill: var(--ax-text-neutral-subtle);
+  font-size: 10.5px;
+}
+
+.ep-land__topic {
+  fill: var(--tone-text);
+  font-family: var(--ep-mono);
+  font-size: 10.5px;
+}
+
+.ep-land__chip {
+  fill: var(--ax-text-neutral);
+  font-size: 12px;
+}
+
+.ep-land__links {
+  display: grid;
+  gap: 2px;
+  margin: var(--ax-space-8) 0 0;
+  font-size: 0.8125rem;
+}
+
+.ep-land__links > div {
+  display: flex;
+  gap: var(--ax-space-8);
+}
+
+.ep-land__links dt {
+  flex: none;
+  width: 2rem;
+  font-weight: 600;
+  color: var(--ax-text-neutral-subtle);
+}
+
+.ep-land__links dd {
+  margin: 0;
+}
+
+/* Boxes arrive left to right, then the lines fade in */
+.ep-reveal-ready .ep-land[data-revealed] .ep-land__pop {
+  animation: ep-land-pop 520ms var(--ep-ease) backwards;
+  animation-delay: calc(150ms + var(--wave, 0) * 90ms);
+}
+
+.ep-reveal-ready .ep-land[data-revealed] .ep-land__edges {
+  animation: ep-archx-fade 700ms ease-out backwards;
+  animation-delay: 800ms;
+}
+
+@keyframes ep-land-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@keyframes ep-land-flow {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+
 /* Notes under a figure */
 .ep-archx-notes {
   display: grid;

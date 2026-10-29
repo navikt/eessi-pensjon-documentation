@@ -24,6 +24,7 @@ import {
   ShieldLockIcon,
 } from "@navikt/aksel-icons";
 import { JumpNav, SectionHead, type JumpItem } from "../components/PageSections";
+import { SystemLandscape } from "../components/SystemLandscape";
 import {
   APPLICATIONS,
   EXTERNAL_COUNT,
@@ -44,6 +45,7 @@ import { useReveal } from "../lib/motion";
 type IconType = ComponentType<SVGProps<SVGSVGElement>>;
 
 const JUMP: JumpItem[] = [
+  { id: "kart", label: "Kart" },
   { id: "lagene", label: "Lagene" },
   { id: "synkront", label: "Synkront" },
   { id: "asynkront", label: "Asynkront" },
@@ -73,9 +75,19 @@ export function ArchitecturePage() {
       <JumpNav items={JUMP} />
 
       <Section
+        id="kart"
+        tone="accent"
+        eyebrow="Arkitekturkart"
+        title="Hele systemet på ett kart"
+        lead="Fra utlandet via EUX, gjennom våre apper og ut til Nav-systemene. Hold over en boks for å se hva den henger sammen med."
+      >
+        <SystemLandscape />
+      </Section>
+
+      <Section
         id="lagene"
         tone="accent"
-        eyebrow="Oversikt"
+        eyebrow="Lagene"
         title="Fire lag, to retninger"
         lead="EESSI Pensjon ligger mellom EUX-plattformen og Nav sine fagsystemer. Vi snakker aldri direkte med utlandet; alt går via EUX."
       >
