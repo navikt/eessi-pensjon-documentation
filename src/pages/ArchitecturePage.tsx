@@ -24,7 +24,7 @@ import {
   ShieldLockIcon,
 } from "@navikt/aksel-icons";
 import { JumpNav, SectionHead, type JumpItem } from "../components/PageSections";
-import { SystemLandscape } from "../components/SystemLandscape";
+import { ArchitectureMap } from "../components/ArchitectureMap";
 import {
   APPLICATIONS,
   EXTERNAL_COUNT,
@@ -79,9 +79,9 @@ export function ArchitecturePage() {
         tone="accent"
         eyebrow="Arkitekturkart"
         title="Hele systemet på ett kart"
-        lead="Fra utlandet via EUX, gjennom våre apper og ut til Nav-systemene. Hold over en boks for å se hva den henger sammen med."
+        lead="Saksbehandleren jobber i den øverste rekken, og SED-ene kommer tilbake fra RINA i den nederste. Hold over en boks for å se hva den henger sammen med."
       >
-        <SystemLandscape />
+        <ArchitectureMap />
       </Section>
 
       <Section
