@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { Button, Chips, Heading, Search, Tag } from "@navikt/ds-react";
 import { ArrowRightIcon, ExternalLinkIcon } from "@navikt/aksel-icons";
 import { ConnectionMap } from "../components/ConnectionMap";
+import { JumpNav, SectionHead, type JumpItem } from "../components/PageSections";
 import {
   APPLICATIONS,
   CATEGORIES,
@@ -41,7 +42,7 @@ const SECTIONS: { id: Category; eyebrow: string; lead: string }[] = [
   },
 ];
 
-const JUMP = [
+const JUMP: JumpItem[] = [
   { id: "kart", label: "Kart" },
   { id: "kjerne", label: "Kjernetjenester" },
   { id: "hendelse", label: "Hendelsesdrevne" },
@@ -138,7 +139,7 @@ export function ApplicationsPage() {
     <article className="ep-page ep-page--wide">
       <Hero />
 
-      <JumpNav />
+      <JumpNav items={JUMP} />
 
       <section id="kart" className="ep-arch-section" aria-labelledby="kart-tittel">
         <SectionHead
@@ -324,50 +325,6 @@ function HeroArt() {
           <span className="ep-plane__label">{p.label}</span>
         </div>
       ))}
-    </div>
-  );
-}
-
-/* ── Navigation and section heads ──────────────────────────────────────── */
-
-function JumpNav() {
-  const [active, setActive] = useState<string>(JUMP[0].id);
-
-  useEffect(() => {
-    if (typeof IntersectionObserver === "undefined") return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const hit = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (hit) setActive(hit.target.id);
-      },
-      { rootMargin: "-20% 0px -70% 0px" },
-    );
-    JUMP.forEach((j) => {
-      const el = document.getElementById(j.id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <nav className="ep-jumpnav" aria-label="På denne siden">
-      {JUMP.map((j) => (
-        <a key={j.id} href={`#${j.id}`} className="ep-jumpnav__link" aria-current={active === j.id ? "location" : undefined}>
-          {j.label}
-        </a>
-      ))}
-    </nav>
-  );
-}
-
-function SectionHead({ eyebrow, title, titleId, lead }: { eyebrow: string; title: string; titleId: string; lead: string }) {
-  return (
-    <div className="ep-arch-section__head">
-      <p className="ep-eyebrow">{eyebrow}</p>
-      <Heading level="2" size="large" id={titleId}>
-        {title}
-      </Heading>
-      <p className="ep-arch-section__lead">{lead}</p>
     </div>
   );
 }

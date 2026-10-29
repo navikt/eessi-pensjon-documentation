@@ -41,7 +41,6 @@ export const NAV_SECTIONS: NavSection[] = [
         label: "Arkitektur",
         Icon: BranchingIcon,
         description: "Hvordan applikasjonene i EESSI Pensjon henger sammen, synkront og via Kafka.",
-        comingSoon: true,
       },
       {
         href: "/applikasjoner",

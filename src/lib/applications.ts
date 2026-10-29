@@ -21,9 +21,10 @@ import {
 } from "@navikt/aksel-icons";
 
 /*
- * The applications, libraries and tools in EESSI Pensjon. The source of truth is
- * architecture.md in the meta repo; keep the two in sync. Library consumers come
- * from the build.gradle files in each repo.
+ * The applications, libraries and tools in EESSI Pensjon. Topics, producers and
+ * consumers are verified against the @KafkaListener/KafkaTemplate code and the
+ * nais/prod-gcp.yml files in each repo; library consumers come from build.gradle.
+ * architecture.md in the meta repo describes the same, keep the two in sync.
  */
 
 export type Category = "kjerne" | "hendelse" | "bibliotek" | "verktoy";
@@ -72,11 +73,11 @@ export const CATEGORIES: { id: Category; label: string; description: string }[] 
   },
 ];
 
-const SED_SENDT = "eessi-basis-sedsendt-v1";
-const SED_MOTTATT = "eessi-basis-sedmottatt-v1";
+const SED_SENDT = "eessibasis.sedsendt-v1";
+const SED_MOTTATT = "eessibasis.sedmottatt-v1";
 const LEESAH = "pdl.leesah-v1";
-const OPPGAVE = "privat-eessipensjon-oppgave-v1-p";
-const KRAV = "privat-eessipensjon-krav-initialisering";
+const OPPGAVE = "eessipensjon.privat-oppgave";
+const KRAV = "eessipensjon.privat-krav-initialisering";
 const PRIVAT_STATISTIKK = "eessipensjon.privat-statistikk";
 const PUBLIC_STATISTIKK = "eessipensjon.public-statistikk";
 const AUTOMATISERING = "eessipensjon.public-automatisering";
@@ -100,9 +101,9 @@ export const APPLICATIONS: Application[] = [
     tech: "Kotlin / Spring Boot",
     Icon: CogIcon,
     summary:
-      "Hovedmodulen. Orkestrerer SED-operasjoner mot EUX og henter data fra Pesys, PDL og SAF. Ber prefill om forhåndsutfylte SED-er og publiserer statistikk på Kafka.",
-    produces: [PRIVAT_STATISTIKK],
-    calls: ["EUX-RINA-API", "eessi-pensjon-prefill", "Pesys", "PDL", "SAF"],
+      "Hovedmodulen. Orkestrerer SED-operasjoner mot EUX og henter data fra Pesys, PDL, SAF og kodeverket. Ber prefill om forhåndsutfylte SED-er og publiserer statistikk på Kafka.",
+    produces: [PRIVAT_STATISTIKK, AUTOMATISERING],
+    calls: ["EUX-RINA-API", "eessi-pensjon-prefill", "Pesys", "PDL", "SAF", "Kodeverk"],
   },
   {
     id: "eessi-pensjon-prefill",
@@ -113,7 +114,7 @@ export const APPLICATIONS: Application[] = [
     summary:
       "Fyller ut SED-er på forhånd med data fra pensjonsløsningen (Pesys), PDL, KRR og Etterlatte. Kalles av fagmodulen.",
     produces: [AUTOMATISERING],
-    calls: ["Pesys", "PDL", "KRR", "Etterlatte"],
+    calls: ["Pesys", "PDL", "KRR", "Kodeverk", "Etterlatte"],
   },
   {
     id: "eessi-pensjon-saksbehandling-api",
@@ -122,8 +123,8 @@ export const APPLICATIONS: Application[] = [
     tech: "Kotlin / Spring Boot",
     Icon: DatabaseIcon,
     summary:
-      "API for data som bare frontend trenger, som brukerens tilstand og SED-status utledet fra Kafka-hendelser om sendte og mottatte SED-er.",
-    consumes: [SED_SENDT, SED_MOTTATT],
+      "API for data som bare frontend trenger: informasjon om innlogget bruker og tilstand som lagres i en GCP-bøtte.",
+    calls: ["eessi-pensjon-fagmodul"],
   },
 
   // Event-driven workers
@@ -136,7 +137,7 @@ export const APPLICATIONS: Application[] = [
     summary:
       "Journalfører pensjons-SED-er som sendes og mottas i Joark. Ber om oppgaver og nye krav via interne Kafka-topics.",
     consumes: [SED_SENDT, SED_MOTTATT],
-    produces: [OPPGAVE, KRAV, PRIVAT_STATISTIKK, AUTOMATISERING],
+    produces: [OPPGAVE, KRAV, AUTOMATISERING],
     calls: [
       "EUX-RINA-API",
       "eessi-pensjon-fagmodul",
@@ -176,8 +177,8 @@ export const APPLICATIONS: Application[] = [
     tech: "Kotlin / Spring Boot",
     Icon: PersonPencilIcon,
     summary:
-      "Oppdaterer persondata i PDL fra innkomne SED-er, som adresser og utenlandske identer. Oppretter oppgave når noe må følges opp manuelt.",
-    consumes: [SED_MOTTATT, LEESAH],
+      "Oppdaterer persondata i PDL fra innkomne SED-er med tre lyttere: adresse, utenlandsk ident og ident for gjenlevende. Oppretter oppgave når noe må følges opp manuelt.",
+    consumes: [SED_MOTTATT],
     produces: [OPPGAVE],
     calls: ["EUX-RINA-API", "PDL", "Person-mottak", "SAF", "Norg2"],
   },
@@ -201,7 +202,7 @@ export const APPLICATIONS: Application[] = [
     summary: "Samler og publiserer statistikk om SED-behandlingen til rapportering (DVH).",
     consumes: [SED_SENDT, SED_MOTTATT, PRIVAT_STATISTIKK],
     produces: [PUBLIC_STATISTIKK],
-    calls: ["EUX-RINA-API"],
+    calls: ["EUX-RINA-API", "PDL"],
   },
   {
     id: "eessi-pensjon-dodsmelding",
@@ -210,7 +211,7 @@ export const APPLICATIONS: Application[] = [
     tech: "Kotlin / Spring Boot",
     Icon: BellIcon,
     summary:
-      "Lytter på dødsfall i PDL. Har personen en pensjonssak i Pesys, sendes dødsmelding (H070) via EUX til aktuelle land, blant annet Sverige, Finland og Polen.",
+      "Lytter på dødsfall i PDL. Står personen i leveattest-registeret eller har en P6000 i Joark, lages en dødsmelding (H070) til Sverige, Finland eller Polen. Selve utsendingen er ikke skrudd på ennå.",
     consumes: [LEESAH],
     calls: ["EUX-RINA-API", "Pesys", "PDL", "SAF"],
   },
@@ -371,32 +372,53 @@ export const TONE_BY_CATEGORY: Record<Category, Tone> = {
   verktoy: "neutral",
 };
 
-type TopicInfo = { label: string; summary: string; scope: "inn" | "intern" | "ut" };
+type TopicInfo = {
+  label: string;
+  summary: string;
+  scope: "inn" | "intern" | "ut";
+  /** Producer outside EP, for topics we only read. */
+  source?: string;
+  /** Reader outside EP, for topics we publish for others. */
+  sink?: string;
+};
 
 export const TOPICS: Record<string, TopicInfo> = {
   [SED_SENDT]: {
     label: "sedsendt-v1",
     summary: "SED-er Nav har sendt. Produseres av EUX-plattformen (eux-legacy-rina-events).",
     scope: "inn",
+    source: "EUX",
   },
   [SED_MOTTATT]: {
     label: "sedmottatt-v1",
     summary: "SED-er Nav har mottatt fra andre land. Produseres av EUX-plattformen (eux-legacy-rina-events).",
     scope: "inn",
+    source: "EUX",
   },
-  [LEESAH]: { label: "leesah-v1", summary: "Personhendelser fra PDL, blant annet dødsfall og adresseendringer.", scope: "inn" },
+  [LEESAH]: {
+    label: "leesah-v1",
+    summary: "Personhendelser fra PDL, blant annet dødsfall og adresseendringer.",
+    scope: "inn",
+    source: "PDL",
+  },
   [OPPGAVE]: { label: "oppgave", summary: "Internt topic med bestillinger av oppgaver til saksbehandlere.", scope: "intern" },
   [KRAV]: { label: "krav-initialisering", summary: "Internt topic med krav som skal opprettes i Pesys.", scope: "intern" },
   [PRIVAT_STATISTIKK]: {
     label: "privat-statistikk",
-    summary: "Internt topic med rådata til statistikk fra fagmodulen og journalføringen.",
+    summary: "Internt topic med rådata til statistikk fra fagmodulen.",
     scope: "intern",
   },
-  [PUBLIC_STATISTIKK]: { label: "public-statistikk", summary: "Ferdig statistikk til datavarehuset (DVH).", scope: "ut" },
+  [PUBLIC_STATISTIKK]: {
+    label: "public-statistikk",
+    summary: "Ferdig statistikk til datavarehuset (DVH).",
+    scope: "ut",
+    sink: "DVH",
+  },
   [AUTOMATISERING]: {
     label: "public-automatisering",
-    summary: "Data om automatiseringsgrad, lest av dv-team-pensjon.",
+    summary: "Data om automatiseringsgrad fra fagmodulen, prefill og journalføringen, lest av dv-team-pensjon.",
     scope: "ut",
+    sink: "dv-team-pensjon",
   },
 };
 
@@ -410,6 +432,7 @@ export const EXTERNALS: Record<string, string> = {
   Oppgave: "Nav sitt oppgavesystem.",
   Norg2: "Nav-enheter og hvem som behandler hva.",
   KRR: "Kontakt- og reservasjonsregisteret.",
+  Kodeverk: "Nav sitt kodeverk, blant annet land- og postnummer.",
   "Nav Ansatt": "Informasjon om saksbehandlere.",
   Etterlatte: "Etterlatteløsningen (Gjenny).",
 };
