@@ -1,6 +1,8 @@
-import { BodyLong, BodyShort, Detail, Heading, LinkCard, Tag } from "@navikt/ds-react";
+import type { CSSProperties, PointerEvent } from "react";
+import { BodyLong, BodyShort, Button, Detail, Heading, LinkCard } from "@navikt/ds-react";
 import {
   ArchiveIcon,
+  ArrowRightIcon,
   BarChartIcon,
   BellIcon,
   BriefcaseIcon,
@@ -15,6 +17,8 @@ import { INTERNAL_PAGES } from "../lib/navigation";
 import { LIBRARY_COUNT, SERVICE_COUNT } from "../lib/applications";
 import { ApiStatus } from "../components/ApiStatus";
 import { RequireLogin } from "../components/RequireLogin";
+import { ExchangeIllustration } from "../components/ExchangeIllustration";
+import { useCountUp, useReveal } from "../lib/motion";
 import type { UserState } from "../lib/user";
 
 const CAPABILITIES = [
@@ -66,9 +70,9 @@ const CAPABILITIES = [
 ];
 
 const FACTS = [
-  { value: String(SERVICE_COUNT), label: "applikasjoner" },
-  { value: String(LIBRARY_COUNT), label: "delte biblioteker" },
-  { value: "2", label: "fagsystemer: Pesys og Gjenny" },
+  { value: SERVICE_COUNT, label: "applikasjoner" },
+  { value: LIBRARY_COUNT, label: "delte biblioteker" },
+  { value: 2, label: "fagsystemer: Pesys og Gjenny" },
 ];
 
 const TERMS = [
@@ -78,37 +82,112 @@ const TERMS = [
   { term: "RINA", text: "Saksbehandlingssystemet hvert land bruker for å sende og motta SED-er." },
 ];
 
+const MODES = [
+  {
+    Icon: MonitorIcon,
+    title: "Synkront — når saksbehandleren ber om det",
+    text: "Saksbehandlerløsningen kaller fagmodulen og saksbehandling-API-et. Fagmodulen orkestrerer SED-operasjoner mot EUX og henter preutfylte data fra prefill-tjenesten.",
+    variant: "sync",
+    stops: ["Saksbehandler", "Fagmodul", "EUX"],
+  },
+  {
+    Icon: LightningIcon,
+    title: "Asynkront — når en SED sendes eller mottas",
+    text: "Hendelser om sendte og mottatte SED-er går på Kafka. Egne tjenester journalfører, oppretter oppgaver, starter krav, oppdaterer PDL, begrenser innsyn og lager statistikk.",
+    variant: "async",
+    stops: ["RINA", "Kafka", "EP-tjenester"],
+  },
+];
+
+const stagger = (i: number) => ({ "--stagger": i }) as CSSProperties;
+
+function Fact({ value, label }: { value: number; label: string }) {
+  const shown = useCountUp(value);
+  return (
+    <div className="ep-hero__fact">
+      <dt className="ep-hero__fact-value">
+        <span aria-hidden>{shown}</span>
+        <span className="ep-visually-hidden">{value}</span>
+      </dt>
+      <dd className="ep-hero__fact-label">{label}</dd>
+    </div>
+  );
+}
+
+function trackSpotlight(event: PointerEvent<HTMLElement>) {
+  const card = (event.target as Element).closest<HTMLElement>(".ep-capability");
+  if (!card) return;
+  const rect = card.getBoundingClientRect();
+  card.style.setProperty("--mx", `${event.clientX - rect.left}px`);
+  card.style.setProperty("--my", `${event.clientY - rect.top}px`);
+}
+
+function SectionTitle({ id, eyebrow, children }: { id: string; eyebrow: string; children: string }) {
+  return (
+    <div data-reveal>
+      <p className="ep-eyebrow ep-home__eyebrow">{eyebrow}</p>
+      <Heading level="2" size="large" id={id} spacing>
+        {children}
+      </Heading>
+    </div>
+  );
+}
+
 export function HomePage({ user }: { user: UserState }) {
   const upcoming = INTERNAL_PAGES.filter((p) => p.comingSoon);
+  const revealRef = useReveal<HTMLElement>();
 
   return (
-    <article className="ep-page">
+    <article className="ep-page ep-home" ref={revealRef}>
       <header className="ep-hero">
-        <div className="ep-hero__glow" aria-hidden />
-        <Tag size="small" variant="moderate" data-color="accent" className="ep-hero__eyebrow">
-          Team EESSI Pensjon
-        </Tag>
-        <Heading level="1" size="xlarge" className="ep-hero__title">
-          Pensjon på tvers av landegrenser
-        </Heading>
-        <BodyLong size="large" className="ep-hero__lead">
-          EESSI Pensjon er Nav sine løsninger for å utveksle pensjonsinformasjon elektronisk med andre
-          europeiske land. Her samler vi dokumentasjonen om hvordan løsningen er bygget, hvordan
-          den henger sammen og hvordan den driftes.
-        </BodyLong>
-        <dl className="ep-hero__facts">
-          {FACTS.map((f) => (
-            <div key={f.label} className="ep-hero__fact">
-              <dt className="ep-hero__fact-value">{f.value}</dt>
-              <dd className="ep-hero__fact-label">{f.label}</dd>
-            </div>
-          ))}
-        </dl>
+        <div className="ep-hero__bg" aria-hidden>
+          <span className="ep-hero__blob ep-hero__blob--a" />
+          <span className="ep-hero__blob ep-hero__blob--b" />
+        </div>
+
+        <div className="ep-hero__text">
+          <p className="ep-hero__eyebrow ep-enter" style={stagger(0)}>
+            <span className="ep-hero__live" aria-hidden />
+            Team EESSI Pensjon
+          </p>
+          <Heading level="1" size="xlarge" className="ep-hero__title ep-enter" style={stagger(1)}>
+            Pensjon på tvers av <span className="ep-gradient-text">landegrenser</span>
+          </Heading>
+          <BodyLong size="large" className="ep-hero__lead ep-enter" style={stagger(2)}>
+            EESSI Pensjon er Nav sine løsninger for å utveksle pensjonsinformasjon elektronisk med andre
+            europeiske land. Her samler vi dokumentasjonen om hvordan løsningen er bygget, hvordan den henger
+            sammen og hvordan den driftes.
+          </BodyLong>
+          <div className="ep-hero__actions ep-enter" style={stagger(3)}>
+            <Button
+              as="a"
+              href="/applikasjoner"
+              icon={<ArrowRightIcon aria-hidden />}
+              iconPosition="right"
+              className="ep-hero__cta"
+            >
+              Utforsk applikasjonene
+            </Button>
+            <Button as="a" href="#hva-er-eessi" variant="secondary">
+              Hva er EESSI?
+            </Button>
+          </div>
+          <dl className="ep-hero__facts ep-enter" style={stagger(4)}>
+            {FACTS.map((f) => (
+              <Fact key={f.label} {...f} />
+            ))}
+          </dl>
+        </div>
+
+        <div className="ep-hero__art ep-enter" style={stagger(2)}>
+          <ExchangeIllustration />
+        </div>
       </header>
 
       <section className="ep-section" aria-labelledby="hva-er-eessi">
         <div className="ep-split">
-          <div>
+          <div data-reveal>
+            <p className="ep-eyebrow ep-home__eyebrow">Bakgrunn</p>
             <Heading level="2" size="large" id="hva-er-eessi" spacing>
               Hva er EESSI?
             </Heading>
@@ -124,7 +203,7 @@ export function HomePage({ user }: { user: UserState }) {
               for pensjon.
             </BodyLong>
           </div>
-          <dl className="ep-terms">
+          <dl className="ep-terms" data-reveal style={stagger(1)}>
             {TERMS.map((t) => (
               <div key={t.term} className="ep-terms__row">
                 <dt className="ep-terms__term">{t.term}</dt>
@@ -136,16 +215,16 @@ export function HomePage({ user }: { user: UserState }) {
       </section>
 
       <section className="ep-section" aria-labelledby="hva-gjor-ep">
-        <Heading level="2" size="large" id="hva-gjor-ep" spacing>
+        <SectionTitle id="hva-gjor-ep" eyebrow="Funksjonalitet">
           Hva gjør EESSI Pensjon?
-        </Heading>
-        <BodyLong className="ep-section__intro">
+        </SectionTitle>
+        <BodyLong className="ep-section__intro" data-reveal>
           Løsningen består av synkrone tjenester som saksbehandlere bruker direkte, og hendelsesdrevne
           tjenester som reagerer på SED-er som sendes og mottas via Kafka.
         </BodyLong>
-        <ul className="ep-capabilities">
-          {CAPABILITIES.map(({ Icon, title, text }) => (
-            <li key={title} className="ep-capability">
+        <ul className="ep-capabilities" onPointerMove={trackSpotlight}>
+          {CAPABILITIES.map(({ Icon, title, text }, i) => (
+            <li key={title} className="ep-capability" data-reveal style={stagger(i % 3)}>
               <span className="ep-capability__icon" aria-hidden>
                 <Icon />
               </span>
@@ -159,60 +238,65 @@ export function HomePage({ user }: { user: UserState }) {
       </section>
 
       <section className="ep-section" aria-labelledby="to-moduser">
-        <Heading level="2" size="large" id="to-moduser" spacing>
+        <SectionTitle id="to-moduser" eyebrow="Arkitektur">
           To måter å jobbe på
-        </Heading>
+        </SectionTitle>
         <div className="ep-modes">
-          <div className="ep-mode">
-            <span className="ep-mode__badge" aria-hidden>
-              <MonitorIcon />
-            </span>
-            <Heading level="3" size="small" spacing>
-              Synkront — når saksbehandleren ber om det
-            </Heading>
-            <BodyLong size="small">
-              Saksbehandlerløsningen kaller fagmodulen og saksbehandling-API-et. Fagmodulen orkestrerer
-              SED-operasjoner mot EUX og henter preutfylte data fra prefill-tjenesten.
-            </BodyLong>
-          </div>
-          <div className="ep-mode">
-            <span className="ep-mode__badge" aria-hidden>
-              <LightningIcon />
-            </span>
-            <Heading level="3" size="small" spacing>
-              Asynkront — når en SED sendes eller mottas
-            </Heading>
-            <BodyLong size="small">
-              Hendelser om sendte og mottatte SED-er går på Kafka. Egne tjenester journalfører, oppretter
-              oppgaver, starter krav, oppdaterer PDL, begrenser innsyn og lager statistikk.
-            </BodyLong>
-          </div>
-        </div>
-      </section>
-
-      <section className="ep-section" aria-labelledby="kommer">
-        <div className="ep-section__head">
-          <Heading level="2" size="large" id="kommer">
-            Dette kommer
-          </Heading>
-          <Detail textColor="subtle">Portalen fylles på i de neste iterasjonene</Detail>
-        </div>
-        <div className="ep-cards">
-          {upcoming.map((page) => (
-            <LinkCard key={page.href} size="small">
-              <LinkCard.Icon>
-                <page.Icon fontSize="1.75rem" aria-hidden />
-              </LinkCard.Icon>
-              <LinkCard.Title as="h3">
-                <LinkCard.Anchor href={page.href}>{page.label}</LinkCard.Anchor>
-              </LinkCard.Title>
-              <LinkCard.Description>{page.description}</LinkCard.Description>
-            </LinkCard>
+          {MODES.map(({ Icon, title, text, variant, stops }, i) => (
+            <div key={variant} className="ep-mode" data-variant={variant} data-reveal style={stagger(i)}>
+              <span className="ep-mode__badge" aria-hidden>
+                <Icon />
+              </span>
+              <Heading level="3" size="small" spacing>
+                {title}
+              </Heading>
+              <BodyLong size="small">{text}</BodyLong>
+              <div className="ep-mode__track" aria-hidden>
+                {stops.map((stop, s) => (
+                  <span key={stop} className="ep-mode__segment">
+                    {s > 0 && (
+                      <span className="ep-mode__wire">
+                        <i />
+                        <i />
+                      </span>
+                    )}
+                    <span className="ep-mode__stop">{stop}</span>
+                  </span>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
       </section>
 
-      <section className="ep-section" aria-labelledby="tilkobling">
+      <section className="ep-section" aria-labelledby="kommer">
+        <div className="ep-section__head" data-reveal>
+          <div>
+            <p className="ep-eyebrow ep-home__eyebrow">Veikart</p>
+            <Heading level="2" size="large" id="kommer">
+              Dette kommer
+            </Heading>
+          </div>
+          <Detail textColor="subtle">Portalen fylles på i de neste iterasjonene</Detail>
+        </div>
+        <div className="ep-cards">
+          {upcoming.map((page, i) => (
+            <div key={page.href} className="ep-cards__item" data-reveal style={stagger(i)}>
+              <LinkCard size="small">
+                <LinkCard.Icon>
+                  <page.Icon fontSize="1.75rem" aria-hidden />
+                </LinkCard.Icon>
+                <LinkCard.Title as="h3">
+                  <LinkCard.Anchor href={page.href}>{page.label}</LinkCard.Anchor>
+                </LinkCard.Title>
+                <LinkCard.Description>{page.description}</LinkCard.Description>
+              </LinkCard>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="ep-section" aria-labelledby="tilkobling" data-reveal>
         <Heading level="2" size="small" id="tilkobling" spacing>
           Tilkobling
         </Heading>
