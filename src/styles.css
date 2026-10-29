@@ -1945,6 +1945,36 @@ html.dark .ep-map__node--external rect {
   min-width: 0;
 }
 
+/* Login required */
+
+.ep-login-required {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ax-space-16);
+  padding: var(--ax-space-16) var(--ax-space-20);
+  border-radius: var(--ax-radius-12);
+  background: var(--ax-bg-raised);
+  border: 1px dashed var(--ax-border-neutral);
+}
+
+.ep-login-required__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: var(--ax-radius-full);
+  background: var(--ax-bg-neutral-moderate);
+  color: var(--ax-text-neutral-subtle);
+  font-size: 1.375rem;
+}
+
+.ep-login-required__text {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
 /* ── Small screens ─────────────────────────────────────────────────────── */
 
 @media (max-width: 960px) {

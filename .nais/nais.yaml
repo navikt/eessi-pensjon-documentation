@@ -36,9 +36,8 @@ spec:
           - "NAVident"
     sidecar:
       enabled: true
-      autoLogin: true
-      autoLoginIgnorePaths:
-        - /internal/*
+      # The documentation is open; the app asks for login where needed (PROTECTED_PATHS in server.mjs).
+      autoLogin: false
   accessPolicy:
     outbound:
       rules:

@@ -1,6 +1,12 @@
 import { useEffect, useState, type ReactElement } from "react";
 import { Tooltip } from "@navikt/ds-react";
-import { ChevronLeftIcon, ExternalLinkIcon, MenuHamburgerIcon, XMarkIcon } from "@navikt/aksel-icons";
+import {
+  ChevronLeftIcon,
+  ExternalLinkIcon,
+  MenuHamburgerIcon,
+  PadlockLockedIcon,
+  XMarkIcon,
+} from "@navikt/aksel-icons";
 import { NAV_SECTIONS, isActive, type NavItem } from "../lib/navigation";
 import { usePathname } from "../lib/router";
 import { isDesktop, toggleCollapsed, useCollapsed, useDesktop } from "../lib/sidebar";
@@ -41,6 +47,7 @@ function RailTip({ rail, content, children }: { rail: boolean; content: string; 
 function hint(item: NavItem): string {
   if (item.external) return `${item.label} (åpnes i ny fane)`;
   if (item.comingSoon) return `${item.label} · kommer snart`;
+  if (item.requiresLogin) return `${item.label} · krever innlogging`;
   return item.label;
 }
 
@@ -138,6 +145,9 @@ export function Sidebar({ user }: { user: UserState }) {
                             <ExternalLinkIcon title="åpnes i ny fane" className="ep-sidebar__trail" />
                           )}
                           {item.comingSoon && <span className="ep-sidebar__soon">Snart</span>}
+                          {item.requiresLogin && (
+                            <PadlockLockedIcon title="krever innlogging" className="ep-sidebar__trail" />
+                          )}
                         </a>
                       </RailTip>
                     </li>

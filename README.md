@@ -25,7 +25,10 @@ Nettleser ──▶ Wonderwall (sidecar) ──▶ server.mjs ──▶ eessi-pe
                                        • alt annet → index.html / statiske filer
 ```
 
-Wonderwall har `autoLogin`, så alle sider unntatt `/internal/*` krever innlogging.
+Dokumentasjonen er åpen for alle, så Wonderwall kjører uten `autoLogin`. Sider som krever innlogging
+(foreløpig bare «Systemstatus») har `requiresLogin` i `src/lib/navigation.ts` og står i `PROTECTED_PATHS` i
+`server/server.mjs`. De får et hengelås-ikon i menyen, og serveren sender brukeren til innlogging når siden
+lastes direkte. `/api/*` krever alltid innlogging.
 
 ## Utvikling lokalt
 

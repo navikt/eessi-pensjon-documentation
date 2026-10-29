@@ -1,9 +1,10 @@
 // Production server for eessi-pensjon-documentation.
 //
-// Runs behind Wonderwall (the NAIS login proxy). Wonderwall handles /oauth2/*
-// and forwards the employee's Entra ID token in the Authorization header.
-// This server:
-//   - serves the Vite build (SPA with index.html fallback)
+// Runs behind Wonderwall (the NAIS login proxy) without auto-login. Wonderwall
+// handles /oauth2/* and, when the employee has a session, forwards their Entra ID
+// token in the Authorization header. This server:
+//   - serves the Vite build (SPA with index.html fallback); the documentation is
+//     open to everyone, PROTECTED_PATHS require a valid session
 //   - validates the user token through Texas introspection
 //   - exposes GET /api/me with the logged-in employee
 //   - proxies /api/* to eessi-pensjon-documentation-api with an on-behalf-of token
@@ -32,6 +33,14 @@ const MIME_TYPES = {
   ".txt": "text/plain; charset=utf-8",
   ".map": "application/json; charset=utf-8",
 };
+
+/** Pages that need a logged-in employee. Keep in sync with `requiresLogin` in src/lib/navigation.ts. */
+const PROTECTED_PATHS = ["/status"];
+
+function isProtected(pathname) {
+  const path = pathname.replace(/\/+$/, "") || "/";
+  return PROTECTED_PATHS.some((p) => path === p || path.startsWith(p + "/"));
+}
 
 const FORWARDED_REQUEST_HEADERS = ["accept", "accept-language", "content-type", "x-request-id"];
 const FORWARDED_RESPONSE_HEADERS = ["content-type", "cache-control", "x-request-id"];
@@ -183,8 +192,8 @@ async function handleStatic(config, req, res, pathname) {
     return sendJson(res, 404, { message: "Fant ikke filen" });
   }
 
-  // HTML: every client-side route gets index.html, but only for a valid session.
-  if (!config.local) {
+  // HTML: every client-side route gets index.html. Protected pages need a valid session.
+  if (!config.local && isProtected(pathname)) {
     const token = bearerToken(req);
     if (!token || !(await introspect(config, token))) return loginRedirect(res, req.url);
   }

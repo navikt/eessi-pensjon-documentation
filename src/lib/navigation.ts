@@ -19,6 +19,8 @@ export type NavItem = {
   /** The page is planned but not written yet. */
   comingSoon?: boolean;
   external?: boolean;
+  /** Only for logged-in employees. Keep in sync with PROTECTED_PATHS in server/server.mjs. */
+  requiresLogin?: boolean;
 };
 
 export type NavSection = {
@@ -71,6 +73,7 @@ export const NAV_SECTIONS: NavSection[] = [
         label: "Systemstatus",
         Icon: HeartIcon,
         description: "Sjekker at portalen når sitt eget API med innlogget bruker.",
+        requiresLogin: true,
       },
     ],
   },
