@@ -274,13 +274,11 @@ const LAYERS: {
   { id: "nav", title: "Nav-fagsystemer", short: "Nav", sub: "Der dataene bor", tone: "success", Icon: DatabaseIcon },
 ];
 
-/** The four layers as stacked bands with a packet travelling through them. */
+/** The four layers as stacked bands. */
 function HeroArt() {
   return (
     <div className="ep-arch-hero__art ep-archx-art" aria-hidden>
-      <span className="ep-archx-art__rail">
-        <span className="ep-archx-art__packet" />
-      </span>
+      <span className="ep-archx-art__rail" />
       {LAYERS.map((l, i) => (
         <div key={l.id} className="ep-archx-art__band" data-tone={l.tone} style={vars({ "--i": i })}>
           <span className="ep-archx-art__icon">

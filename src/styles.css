@@ -2149,7 +2149,6 @@ a.ep-apps-chip:focus-visible {
   border-radius: 14px;
   background: var(--ax-bg-raised);
   box-shadow: 0 30px 60px -36px var(--ax-bg-accent-strong);
-  animation: ep-float 7s ease-in-out infinite;
 }
 
 .ep-dev-term__bar {
@@ -3107,7 +3106,7 @@ html.dark .ep-map__node--external rect {
   margin: var(--ax-space-32) 0 var(--ax-space-12);
 }
 
-/* Hero art: the four layers with a packet travelling through them */
+/* Hero art: the four layers as stacked bands */
 .ep-archx-art {
   display: flex;
   flex-direction: column;
@@ -3125,25 +3124,6 @@ html.dark .ep-map__node--external rect {
   width: 2px;
   border-radius: 2px;
   background: linear-gradient(var(--ax-border-neutral-subtle), var(--ax-border-accent), var(--ax-border-neutral-subtle));
-}
-
-.ep-archx-art__packet {
-  position: absolute;
-  left: 50%;
-  top: 0;
-  width: 10px;
-  height: 10px;
-  margin-left: -5px;
-  border-radius: 50%;
-  background: var(--ax-bg-accent-strong);
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--ax-bg-accent-strong) 20%, transparent);
-  animation: ep-archx-packet 5s var(--ep-ease) infinite alternate;
-}
-
-@keyframes ep-archx-packet {
-  to {
-    top: calc(100% - 10px);
-  }
 }
 
 .ep-archx-art__band {
@@ -4820,7 +4800,6 @@ html.dark .ep-map__node--external rect {
     transition: none !important;
   }
 
-  .ep-archx-art__packet,
   .ep-archx-connector__dot,
   .ep-archx-rail__pulse,
   .ep-archx-chain__wire span {
