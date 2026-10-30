@@ -4,11 +4,15 @@ import {
   BarChartIcon,
   BellIcon,
   BookIcon,
+  ArrowRightLeftIcon,
   BriefcaseIcon,
+  CaretDownCircleIcon,
   CogIcon,
   CompassIcon,
   DatabaseIcon,
+  EarthIcon,
   EyeSlashIcon,
+  FlagCrossIcon,
   GlobeIcon,
   MagnifyingGlassIcon,
   MonitorIcon,
@@ -16,6 +20,7 @@ import {
   PencilWritingIcon,
   PersonIcon,
   PersonPencilIcon,
+  TableIcon,
   TasklistIcon,
   TerminalIcon,
 } from "@navikt/aksel-icons";
@@ -23,7 +28,8 @@ import {
 /*
  * The applications, libraries and tools in EESSI Pensjon. Topics, producers and
  * consumers are verified against the @KafkaListener/KafkaTemplate code and the
- * nais/prod-gcp.yml files in each repo; library consumers come from build.gradle.
+ * nais/prod-gcp.yml files in each repo; library consumers come from build.gradle
+ * (backend) and package.json / peerDependencies (frontend).
  * architecture.md in the meta repo describes the same, keep the two in sync.
  */
 
@@ -46,6 +52,10 @@ export type Application = {
   calls?: string[];
   /** For libraries: the EP apps (by id) that depend on it. */
   usedBy?: string[];
+  /** For libraries: where it runs. Defaults to "backend". */
+  stack?: "backend" | "frontend";
+  /** For frontend libraries: the npm package name, when it differs from the repo. */
+  npm?: string;
   /** Overrides the default github.com/navikt/<id> link. */
   repoUrl?: string;
 };
@@ -319,6 +329,64 @@ export const APPLICATIONS: Application[] = [
     ],
   },
 
+  // Frontend libraries (npm, consumed by saksbehandling-ui)
+  {
+    id: "fetch-api",
+    name: "fetch-api",
+    category: "bibliotek",
+    stack: "frontend",
+    npm: "@navikt/fetch",
+    tech: "TypeScript-bibliotek",
+    Icon: ArrowRightLeftIcon,
+    summary:
+      "Fetch-kall som Redux-actions (request, success, failure), med feil som JSON og mockede svar med forsinkelse og feilrate i utvikling.",
+    usedBy: ["eessi-pensjon-saksbehandling-ui"],
+  },
+  {
+    id: "tabell",
+    name: "tabell",
+    category: "bibliotek",
+    stack: "frontend",
+    npm: "@navikt/tabell",
+    tech: "React-komponent",
+    Icon: TableIcon,
+    summary: "Tabell med sortering, søk, paginering og animasjoner.",
+    usedBy: ["eessi-pensjon-saksbehandling-ui"],
+  },
+  {
+    id: "landvelger",
+    name: "landvelger",
+    category: "bibliotek",
+    stack: "frontend",
+    npm: "@navikt/landvelger",
+    tech: "React-komponent",
+    Icon: CaretDownCircleIcon,
+    summary: "Nedtrekksliste for å velge land eller valuta, med flagg fra flagg-ikoner.",
+    usedBy: ["eessi-pensjon-saksbehandling-ui"],
+  },
+  {
+    id: "flagg-ikoner",
+    name: "flagg-ikoner",
+    category: "bibliotek",
+    stack: "frontend",
+    npm: "@navikt/flagg-ikoner",
+    tech: "React-komponent",
+    Icon: FlagCrossIcon,
+    summary: "Flagg for hvert land, rektangulære eller runde.",
+    usedBy: ["eessi-pensjon-saksbehandling-ui", "landvelger"],
+  },
+  {
+    id: "land-verktoy",
+    name: "land-verktoy",
+    category: "bibliotek",
+    stack: "frontend",
+    npm: "@navikt/land-verktoy",
+    tech: "TypeScript-bibliotek",
+    Icon: EarthIcon,
+    summary: "Landkoder, landnavn og valutaer på flere språk.",
+    usedBy: ["eessi-pensjon-saksbehandling-ui", "landvelger", "flagg-ikoner"],
+  },
+
   // Tools
   {
     id: "eessi-pensjon-documentation",
@@ -359,7 +427,10 @@ export const findApplication = (id: string) => BY_ID.get(id);
 /** Deployed EP services (core + event-driven). */
 export const SERVICES = APPLICATIONS.filter(isService);
 export const SERVICE_COUNT = SERVICES.length;
-export const LIBRARY_COUNT = APPLICATIONS.filter((a) => a.category === "bibliotek").length;
+export const LIBRARIES = APPLICATIONS.filter((a) => a.category === "bibliotek");
+export const BACKEND_LIBRARIES = LIBRARIES.filter((a) => a.stack !== "frontend");
+export const FRONTEND_LIBRARIES = LIBRARIES.filter((a) => a.stack === "frontend");
+export const LIBRARY_COUNT = LIBRARIES.length;
 
 /* ---------- Graph: how the services, topics and external systems connect ---------- */
 

@@ -2091,6 +2091,47 @@ a.ep-apps-chip:focus-visible {
   margin-bottom: 0;
 }
 
+.ep-apps-lib__pkg {
+  align-self: flex-start;
+  padding: 2px var(--ax-space-6);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  color: var(--ax-text-neutral-subtle);
+  background: var(--ax-bg-neutral-soft);
+}
+
+.ep-apps-libgroup + .ep-apps-libgroup {
+  margin-top: var(--ax-space-32);
+}
+
+.ep-apps-libgroup__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ax-space-8) var(--ax-space-12);
+  margin-bottom: var(--ax-space-12);
+  padding-bottom: var(--ax-space-8);
+  border-bottom: 1px solid var(--ax-border-neutral-subtle);
+}
+
+.ep-apps-libgroup__count {
+  min-width: 1.5rem;
+  padding: 0 var(--ax-space-6);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+  text-align: center;
+  color: var(--ax-text-warning);
+  background: var(--ax-bg-warning-soft);
+}
+
+.ep-apps-libgroup__meta {
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--ax-text-neutral-subtle);
+}
+
 /* Connection map */
 .ep-map {
   overflow: hidden;

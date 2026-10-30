@@ -6,9 +6,12 @@ import { ConnectionMap } from "../components/ConnectionMap";
 import { JumpNav, SectionHead, type JumpItem } from "../components/PageSections";
 import {
   APPLICATIONS,
+  BACKEND_LIBRARIES,
   CATEGORIES,
   EXTERNALS,
   EXTERNAL_COUNT,
+  FRONTEND_LIBRARIES,
+  LIBRARIES,
   LIBRARY_COUNT,
   SERVICES,
   TONE_BY_CATEGORY,
@@ -50,9 +53,24 @@ const JUMP: JumpItem[] = [
 ];
 
 const SERVICE_IDS = new Set(SERVICES.map((a) => a.id));
-const LIBRARIES = APPLICATIONS.filter((a) => a.category === "bibliotek");
 const TOOLS = APPLICATIONS.filter((a) => a.category === "verktoy");
 const CORE_COUNT = SERVICES.filter((a) => a.category === "kjerne").length;
+
+const LIBRARY_GROUPS = [
+  {
+    id: "biblioteker-backend",
+    title: "Backend-biblioteker",
+    meta: "Kotlin · GitHub Packages · Gradle",
+    items: BACKEND_LIBRARIES,
+  },
+  {
+    id: "biblioteker-frontend",
+    title: "Frontend-biblioteker",
+    meta: "TypeScript · npm · @navikt",
+    items: FRONTEND_LIBRARIES,
+  },
+  { id: "verktoy", title: "Verktøy", meta: "Interne verktøy for teamet", items: TOOLS },
+];
 
 const calledBy = (id: string) => SERVICES.filter((a) => a.calls?.includes(id)).map((a) => a.id);
 const librariesOf = (id: string) => LIBRARIES.filter((l) => l.usedBy?.includes(id)).map((l) => l.id);
@@ -233,15 +251,26 @@ export function ApplicationsPage() {
           eyebrow={`Delt kode · ${LIBRARY_COUNT} biblioteker`}
           title="Biblioteker og verktøy"
           titleId="biblioteker-tittel"
-          lead="Bibliotekene publiseres til GitHub Packages og hentes inn med Gradle. Verktøyene kjører ved siden av tjenestene."
+          lead="Backend-bibliotekene publiseres til GitHub Packages og hentes inn med Gradle. Frontend-bibliotekene er npm-pakker som saksbehandlerløsningen bruker. Verktøyene kjører ved siden av tjenestene."
         />
-        <ul className="ep-apps-libs">
-          {[...LIBRARIES, ...TOOLS].map((lib) => (
-            <li key={lib.id}>
-              <LibraryCard lib={lib} onJump={jumpTo} />
-            </li>
-          ))}
-        </ul>
+        {LIBRARY_GROUPS.map((group) => (
+          <div key={group.id} id={group.id} className="ep-apps-libgroup" aria-labelledby={`${group.id}-tittel`} role="group">
+            <div className="ep-apps-libgroup__head">
+              <Heading level="3" size="xsmall" id={`${group.id}-tittel`}>
+                {group.title}
+              </Heading>
+              <span className="ep-apps-libgroup__count">{group.items.length}</span>
+              <span className="ep-apps-libgroup__meta ep-mono">{group.meta}</span>
+            </div>
+            <ul className="ep-apps-libs">
+              {group.items.map((lib) => (
+                <li key={lib.id}>
+                  <LibraryCard lib={lib} onJump={jumpTo} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </section>
 
       <p className="ep-page__footnote">
@@ -258,12 +287,12 @@ function Hero() {
     { n: SERVICES.length, label: "tjenester", sub: `${CORE_COUNT} synkrone · ${SERVICES.length - CORE_COUNT} hendelsesdrevne` },
     { n: TOPIC_COUNT, label: "Kafka-topics", sub: `${Object.values(TOPICS).filter((t) => t.scope === "inn").length} inn · ${Object.values(TOPICS).filter((t) => t.scope !== "inn").length} egne` },
     { n: EXTERNAL_COUNT, label: "eksterne systemer", sub: "EUX, Pesys, PDL, Joark …" },
-    { n: LIBRARY_COUNT, label: "biblioteker", sub: "ep-eux, ep-personoppslag …" },
+    { n: LIBRARY_COUNT, label: "biblioteker", sub: `${BACKEND_LIBRARIES.length} backend · ${FRONTEND_LIBRARIES.length} frontend` },
   ];
   const flows = [
     { href: "#kart", tone: "meta-purple", title: "Se kartet", text: "Hvem kaller hvem, og hvilke topics binder tjenestene sammen." },
     { href: "#hendelse", tone: "success", title: "Følg en SED", text: "Fra sedsendt og sedmottatt til journalpost, oppgave og krav." },
-    { href: "#biblioteker", tone: "warning", title: "Delt kode", text: "Bibliotekene alle tjenestene bygger på." },
+    { href: "#biblioteker", tone: "warning", title: "Delt kode", text: "Bibliotekene tjenestene og brukerflaten bygger på." },
   ];
 
   return (
@@ -451,6 +480,7 @@ function LibraryCard({ lib, onJump }: { lib: Application; onJump: (id: string) =
         </a>
         <span className="ep-apps-lib__tech">{lib.category === "verktoy" ? "Verktøy" : lib.tech}</span>
       </div>
+      {lib.npm && <code className="ep-apps-lib__pkg">npm i {lib.npm}</code>}
       <p className="ep-apps-lib__text">{lib.summary}</p>
       {lib.usedBy && (
         <div className="ep-apps-lib__used">

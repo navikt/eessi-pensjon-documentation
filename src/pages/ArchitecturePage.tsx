@@ -26,7 +26,7 @@ import {
 import { JumpNav, SectionHead, type JumpItem } from "../components/PageSections";
 import { ArchitectureMap } from "../components/ArchitectureMap";
 import {
-  APPLICATIONS,
+  BACKEND_LIBRARIES,
   EXTERNAL_COUNT,
   SERVICES,
   TOPICS,
@@ -58,7 +58,7 @@ const JUMP: JumpItem[] = [
 const CORE = SERVICES.filter((a) => a.category === "kjerne");
 const WORKERS = SERVICES.filter((a) => a.category === "hendelse");
 const KOTLIN_SERVICES = SERVICES.filter((a) => a.tech.startsWith("Kotlin"));
-const LIBRARIES = APPLICATIONS.filter((a) => a.category === "bibliotek");
+const LIBRARIES = BACKEND_LIBRARIES;
 
 const appHref = (id: string) => `/applikasjoner#${id}`;
 const appName = (id: string) => findApplication(id)?.name ?? id;
@@ -834,7 +834,7 @@ function LibraryMatrix() {
   return (
     <figure className="ep-archx-figure ep-archx-matrix" data-reveal>
       <Heading level="3" size="small" className="ep-archx-subhead">
-        Delte biblioteker
+        Delte backend-biblioteker
       </Heading>
       <div className="ep-archx-matrix__scroll" onMouseLeave={() => setCol(null)}>
         <table>
