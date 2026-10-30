@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from "react";
 import { Heading } from "@navikt/ds-react";
 import { ArrowRightIcon } from "@navikt/aksel-icons";
+import { ComplianceFlow, ComplianceTools } from "../components/ComplianceTools";
 import { JumpNav, SectionHead, type JumpItem } from "../components/PageSections";
 import {
   GRADLE_BUILD_COUNT,
@@ -21,6 +22,7 @@ const JUMP: JumpItem[] = [
   { id: "kom-i-gang", label: "Kom i gang" },
   { id: "kommandoer", label: "make-kommandoer" },
   { id: "oppgradere", label: "Oppgradere bibliotekene" },
+  { id: "etterlevelse", label: "Etterlevelse" },
 ];
 
 export function DevelopmentPage() {
@@ -77,9 +79,29 @@ export function DevelopmentPage() {
         <UpgradeFlows />
       </Section>
 
+      <Section
+        id="etterlevelse"
+        tone="accent"
+        eyebrow="Etterlevelse"
+        title="Fra krav til ferdig tekst"
+        lead={
+          <>
+            Vi dokumenterer etterlevelseskravene i{" "}
+            <a href="https://etterlevelse.ansatt.nav.no/">Støtte til etterlevelse</a>. En agent i Copilot CLI skriver
+            utkastene, og teamet kvalitetssikrer dem før de limes inn. Alt ligger i <code>etterlevelse/</code> og{" "}
+            <code>.github/</code> i meta-repoet.
+          </>
+        }
+      >
+        <div className="ep-ett">
+          <ComplianceFlow />
+          <ComplianceTools />
+        </div>
+      </Section>
+
       <p className="ep-page__footnote">
-        Bygget på <code>.meta</code>, <code>Makefile</code>, <code>settings.gradle</code> og <code>script/</code> i
-        meta-repoet. Mer i <code>docs/dev/</code>.
+        Bygget på <code>.meta</code>, <code>Makefile</code>, <code>settings.gradle</code>, <code>script/</code>,{" "}
+        <code>etterlevelse/</code> og <code>.github/</code> i meta-repoet. Mer i <code>docs/dev/</code>.
       </p>
     </article>
   );
@@ -127,6 +149,7 @@ function Hero() {
     { href: "#kom-i-gang", tone: "success", title: "Kom i gang", text: "Klon alt og åpne det i IntelliJ." },
     { href: "#kommandoer", tone: "meta-purple", title: "make-kommandoer", text: "Pull, bygg og oppgrader overalt." },
     { href: "#oppgradere", tone: "warning", title: "Oppgradere", text: "ep-bibliotekene og npm-pakkene." },
+    { href: "#etterlevelse", tone: "accent", title: "Etterlevelse", text: "Agenten, skillene og QA-visningen." },
   ];
 
   return (

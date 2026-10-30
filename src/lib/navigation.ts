@@ -53,7 +53,7 @@ export const NAV_SECTIONS: NavSection[] = [
         href: "/utvikling",
         label: "Utvikling",
         Icon: TerminalIcon,
-        description: "Meta-repoet, make-kommandoene og hvordan vi oppgraderer bibliotekene.",
+        description: "Meta-repoet, make-kommandoene, oppgradering av bibliotekene og etterlevelsesverktøyene.",
       },
       {
         href: "/sed-og-buc",

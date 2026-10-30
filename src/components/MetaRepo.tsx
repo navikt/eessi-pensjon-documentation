@@ -245,12 +245,13 @@ export function UpgradeFlows() {
   );
 }
 
-function CommandLine({ cmd }: { cmd: string }) {
+/** A copyable command. Slash commands (Copilot CLI) get a › prompt instead of $. */
+export function CommandLine({ cmd }: { cmd: string }) {
   return (
     <div className="ep-meta-cmdline">
       <code>
         <span className="ep-meta-cmdline__prompt" aria-hidden>
-          $
+          {cmd.startsWith("/") ? "›" : "$"}
         </span>
         {cmd}
       </code>
