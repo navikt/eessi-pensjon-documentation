@@ -3,6 +3,7 @@ import { flushSync } from "react-dom";
 import { Button, Chips, Heading, Search, Tag } from "@navikt/ds-react";
 import { ArrowRightIcon, ExternalLinkIcon } from "@navikt/aksel-icons";
 import { ConnectionMap } from "../components/ConnectionMap";
+import { MetaRepoGuide } from "../components/MetaRepo";
 import { JumpNav, SectionHead, type JumpItem } from "../components/PageSections";
 import {
   APPLICATIONS,
@@ -50,6 +51,7 @@ const JUMP: JumpItem[] = [
   { id: "kjerne", label: "Kjernetjenester" },
   { id: "hendelse", label: "Hendelsesdrevne" },
   { id: "biblioteker", label: "Biblioteker og verktøy" },
+  { id: "meta-repoet", label: "Meta-repoet" },
 ];
 
 const SERVICE_IDS = new Set(SERVICES.map((a) => a.id));
@@ -271,6 +273,16 @@ export function ApplicationsPage() {
             </ul>
           </div>
         ))}
+      </section>
+
+      <section id="meta-repoet" className="ep-arch-section" aria-labelledby="meta-repoet-tittel">
+        <SectionHead
+          eyebrow="Utviklingsoppsett · meta og make"
+          title="Meta-repoet"
+          titleId="meta-repoet-tittel"
+          lead="navikt/eessi-pensjon holder ingen applikasjonskode selv. Det vet om alle repoene, kloner dem med meta og gir felles make-kommandoer for å bygge, oppdatere og oppgradere dem samtidig."
+        />
+        <MetaRepoGuide />
       </section>
 
       <p className="ep-page__footnote">

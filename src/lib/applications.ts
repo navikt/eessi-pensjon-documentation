@@ -413,7 +413,6 @@ export const APPLICATIONS: Application[] = [
     tech: "Analyseverktøy",
     Icon: MagnifyingGlassIcon,
     summary: "Analyserer kode og revisjonshistorikk på tvers av repoene og lager rapporter som PDF.",
-    repoUrl: "https://github.com/navikt/eessi-pensjon/tree/master/ep-meta-analyse",
   },
 ];
 
