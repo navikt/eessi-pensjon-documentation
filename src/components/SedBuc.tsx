@@ -37,24 +37,51 @@ const vars = (v: Record<string, string | number>) => v as CSSProperties;
 
 type Icon = ComponentType<SVGProps<SVGSVGElement>>;
 
+const ART_SHEETS: { code: string; status: string; tone: Tone; Icon: Icon }[] = [
+  { code: "P2000", status: "Sendt", tone: "accent", Icon: PaperplaneIcon },
+  { code: "P5000", status: "Mottatt", tone: "success", Icon: ArrowDownIcon },
+  { code: "P6000", status: "Utkast", tone: "neutral", Icon: FileTextIcon },
+];
+
 /* Hero art: a BUC folder with SED sheets in it. */
 export function BucFolderArt() {
-  const sheets = ["P2000", "P5000", "P6000"];
   return (
     <div className="ep-arch-hero__art ep-sed-art" aria-hidden>
       <div className="ep-sed-art__folder">
+        <span className="ep-sed-art__back" />
         <span className="ep-sed-art__tab ep-mono">P_BUC_01</span>
-        {sheets.map((s, i) => (
-          <span key={s} className="ep-sed-art__sheet" style={vars({ "--i": i })}>
-            <span className="ep-sed-art__code ep-mono">{s}</span>
+        {ART_SHEETS.map((s, i) => (
+          <span key={s.code} className="ep-sed-art__sheet" style={vars({ "--i": i })}>
+            <span className="ep-sed-art__code ep-mono">{s.code}</span>
             <span className="ep-sed-art__lines">
-              <span />
               <span />
               <span />
             </span>
           </span>
         ))}
-        <span className="ep-sed-art__front" />
+        <span className="ep-sed-art__front">
+          <span className="ep-sed-art__head">
+            <FolderIcon />
+            <span className="ep-sed-art__title">Krav om alderspensjon</span>
+          </span>
+          <span className="ep-sed-art__parties ep-mono">
+            <span className="ep-sed-art__land" data-home>
+              NO
+            </span>
+            <span className="ep-sed-art__wire" />
+            <span className="ep-sed-art__land">SE</span>
+            <span className="ep-sed-art__land">DE</span>
+          </span>
+          <span className="ep-sed-art__log">
+            {ART_SHEETS.map((s, i) => (
+              <span key={s.code} className="ep-sed-art__entry" data-tone={s.tone} style={vars({ "--i": i })}>
+                <s.Icon />
+                <span className="ep-mono">{s.code}</span>
+                <span className="ep-sed-art__status">{s.status}</span>
+              </span>
+            ))}
+          </span>
+        </span>
       </div>
     </div>
   );

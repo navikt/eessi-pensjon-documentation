@@ -3073,22 +3073,21 @@ a.ep-apps-chip:focus-visible {
 .ep-sed-art {
   display: grid;
   place-items: center;
-  min-height: 280px;
+  min-height: 300px;
 }
 
 .ep-sed-art__folder {
   position: relative;
-  width: min(300px, 90%);
-  aspect-ratio: 5 / 4;
+  width: min(340px, 100%);
+  height: 356px;
 }
 
-.ep-sed-art__folder::before {
-  content: "";
+.ep-sed-art__back {
   position: absolute;
   inset: 26px 0 0;
   border: 1px solid var(--ax-border-accent-subtle);
-  border-radius: 0 18px 18px 18px;
-  background: var(--ax-bg-accent-moderate);
+  border-radius: 0 20px 20px 20px;
+  background: linear-gradient(180deg, var(--ax-bg-accent-moderate), var(--ax-bg-accent-soft));
 }
 
 .ep-sed-art__tab {
@@ -3107,19 +3106,19 @@ a.ep-apps-chip:focus-visible {
 
 .ep-sed-art__sheet {
   position: absolute;
-  top: calc(12% + var(--i) * 7%);
-  left: calc(10% + var(--i) * 9%);
+  top: calc(46px + var(--i) * 8px);
+  left: calc(10% + var(--i) * 17%);
   display: flex;
   flex-direction: column;
   gap: var(--ax-space-8);
-  width: 58%;
-  height: 62%;
+  width: 46%;
+  height: 140px;
   padding: var(--ax-space-12);
   border: 1px solid var(--ax-border-neutral-subtle);
   border-radius: 10px;
   background: var(--ax-bg-default);
   box-shadow: 0 12px 24px -18px var(--ax-border-neutral-strong);
-  transform: rotate(calc((var(--i) - 1) * 5deg));
+  transform: rotate(calc((var(--i) - 1) * 4deg));
   animation: ep-sed-sheet 700ms var(--ep-ease) backwards;
   animation-delay: calc(var(--i) * 140ms + 350ms);
 }
@@ -3143,22 +3142,112 @@ a.ep-apps-chip:focus-visible {
 }
 
 .ep-sed-art__lines span:nth-child(2) {
-  width: 80%;
-}
-
-.ep-sed-art__lines span:nth-child(3) {
-  width: 55%;
+  width: 65%;
 }
 
 .ep-sed-art__front {
   position: absolute;
-  inset: auto 0 0;
-  height: 52%;
+  inset: 128px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ax-space-12);
+  padding: var(--ax-space-16) var(--ax-space-20);
   border: 1px solid var(--ax-border-accent-subtle);
-  border-radius: 18px;
-  background: color-mix(in srgb, var(--ax-bg-accent-soft) 88%, transparent);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 -10px 24px -20px var(--ax-bg-accent-strong);
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--ax-bg-raised) 90%, transparent);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 -12px 28px -22px var(--ax-bg-accent-strong), 0 18px 36px -28px var(--ax-border-neutral-strong);
+  animation: ep-rise 600ms var(--ep-ease) 200ms backwards;
+}
+
+.ep-sed-art__head {
+  display: flex;
+  align-items: center;
+  gap: var(--ax-space-8);
+}
+
+.ep-sed-art__head svg {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  padding: 5px;
+  border-radius: 8px;
+  color: var(--ax-text-accent);
+  background: var(--ax-bg-accent-soft);
+}
+
+.ep-sed-art__title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ax-text-neutral);
+}
+
+.ep-sed-art__parties {
+  display: flex;
+  align-items: center;
+  gap: var(--ax-space-6);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.ep-sed-art__land {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 22px;
+  border: 1px solid var(--ax-border-neutral-subtle);
+  border-radius: 6px;
+  color: var(--ax-text-neutral-subtle);
+  background: var(--ax-bg-default);
+}
+
+.ep-sed-art__land[data-home] {
+  border-color: var(--ax-border-accent);
+  color: var(--ax-text-accent);
+  background: var(--ax-bg-accent-soft);
+}
+
+.ep-sed-art__wire {
+  flex: 1;
+  height: 0;
+  border-top: 2px dashed var(--ax-border-accent-subtle);
+}
+
+.ep-sed-art__log {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ax-space-6);
+}
+
+.ep-sed-art__entry {
+  display: flex;
+  align-items: center;
+  gap: var(--ax-space-8);
+  padding: var(--ax-space-6) var(--ax-space-8);
+  border: 1px solid var(--ax-border-neutral-subtle);
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ax-text-neutral);
+  background: var(--ax-bg-default);
+  animation: ep-rise 500ms var(--ep-ease) backwards;
+  animation-delay: calc(var(--i) * 120ms + 600ms);
+}
+
+.ep-sed-art__entry svg {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  color: var(--tone-text);
+}
+
+.ep-sed-art__status {
+  margin-left: auto;
+  padding: 1px var(--ax-space-8);
+  border-radius: 999px;
+  font-size: 0.7rem;
+  color: var(--tone-text);
+  background: var(--tone-soft);
 }
 
 @keyframes ep-sed-sheet {
