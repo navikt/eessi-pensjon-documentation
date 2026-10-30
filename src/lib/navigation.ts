@@ -59,8 +59,7 @@ export const NAV_SECTIONS: NavSection[] = [
         href: "/sed-og-buc",
         label: "SED og BUC",
         Icon: FileTextIcon,
-        description: "Pensjons-SED-ene og BUC-ene vi støtter, og hvordan de behandles.",
-        comingSoon: true,
+        description: "BUC-ene og SED-ene vi støtter, og hva som skjer med dem på vei ut og inn.",
       },
       {
         href: "/ordliste",

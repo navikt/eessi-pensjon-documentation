@@ -10,6 +10,7 @@ import { StatusPage } from "./pages/StatusPage";
 import { ApplicationsPage } from "./pages/ApplicationsPage";
 import { ArchitecturePage } from "./pages/ArchitecturePage";
 import { DevelopmentPage } from "./pages/DevelopmentPage";
+import { SedBucPage } from "./pages/SedBucPage";
 import { ComingSoonPage, NotFoundPage } from "./pages/ComingSoonPage";
 
 function CurrentPage({ pathname, user }: { pathname: string; user: UserState }) {
@@ -20,6 +21,7 @@ function CurrentPage({ pathname, user }: { pathname: string; user: UserState }) 
   if (page.href === "/applikasjoner") return <ApplicationsPage />;
   if (page.href === "/arkitektur") return <ArchitecturePage />;
   if (page.href === "/utvikling") return <DevelopmentPage />;
+  if (page.href === "/sed-og-buc") return <SedBucPage />;
   return <ComingSoonPage page={page} />;
 }
 
