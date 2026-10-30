@@ -1,8 +1,7 @@
 import type { CSSProperties, ComponentType, SVGProps } from "react";
-import { CopyButton, Heading } from "@navikt/ds-react";
+import { CopyButton } from "@navikt/ds-react";
 import { BranchingIcon, ChevronRightIcon, FilesIcon, PackageIcon, WrenchIcon } from "@navikt/aksel-icons";
 import { APPLICATIONS, CATEGORIES, FRONTEND_LIBRARIES, TONE_BY_CATEGORY, repoUrl, type Tone } from "../lib/applications";
-import { useReveal } from "../lib/motion";
 
 /*
  * How the eessi-pensjon meta repo works. Verified against .meta, Makefile,
@@ -138,116 +137,110 @@ const EP_UPGRADE = [
 const BUMP_ORDER = ["tabell", "fetch-api", "land-verktoy", "flagg-ikoner", "landvelger"];
 const BUMP_PIPELINE = ["git pull", "ny versjon", "npm test", "build", "commit og push", "npm publish"];
 
-export function MetaRepoGuide() {
-  const ref = useReveal<HTMLDivElement>();
+/** Repos in .meta, Gradle builds in settings.gradle (keep in sync) and npm packages. */
+export const REPO_COUNT = APPLICATIONS.length;
+export const GRADLE_BUILD_COUNT = 18;
+export const NPM_PACKAGE_COUNT = FRONTEND_LIBRARIES.length;
 
+export function GettingStarted() {
   return (
-    <div ref={ref} className="ep-meta">
-      <MetaMap />
+    <ol className="ep-meta-steps">
+      {GETTING_STARTED.map((s, i) => (
+        <li key={s.title} className="ep-meta-step" style={vars({ "--stagger": i })} data-reveal>
+          <span className="ep-meta-step__n" aria-hidden>
+            {i + 1}
+          </span>
+          <div className="ep-meta-step__body">
+            <p className="ep-meta-step__title">{s.title}</p>
+            <p className="ep-meta-step__text">{s.text}</p>
+            {s.command && <CommandLine cmd={s.command} />}
+          </div>
+        </li>
+      ))}
+    </ol>
+  );
+}
 
-      <div className="ep-meta__split">
-        <div data-reveal>
-          <Heading level="3" size="small" className="ep-meta__h">
-            Kom i gang
-          </Heading>
-          <ol className="ep-meta-steps">
-            {GETTING_STARTED.map((s, i) => (
-              <li key={s.title} className="ep-meta-step" style={vars({ "--stagger": i })} data-reveal>
-                <span className="ep-meta-step__n" aria-hidden>
-                  {i + 1}
-                </span>
-                <div className="ep-meta-step__body">
-                  <p className="ep-meta-step__title">{s.title}</p>
-                  <p className="ep-meta-step__text">{s.text}</p>
-                  {s.command && <CommandLine cmd={s.command} />}
-                </div>
+export function MakeCommands() {
+  return (
+    <div className="ep-meta-cmds">
+      {COMMAND_GROUPS.map((g, i) => (
+        <section
+          key={g.title}
+          className="ep-meta-cmds__group"
+          data-tone={g.tone}
+          aria-label={g.title}
+          data-reveal
+          style={vars({ "--stagger": i })}
+        >
+          <p className="ep-meta-cmds__title">
+            <g.Icon aria-hidden />
+            {g.title}
+          </p>
+          <ul>
+            {g.commands.map((c) => (
+              <li key={c.cmd} className="ep-meta-cmd">
+                <CommandLine cmd={c.cmd} />
+                <p className="ep-meta-cmd__text">{c.text}</p>
               </li>
             ))}
-          </ol>
-        </div>
+          </ul>
+        </section>
+      ))}
+    </div>
+  );
+}
 
-        <div data-reveal style={vars({ "--stagger": 1 })}>
-          <Heading level="3" size="small" className="ep-meta__h">
-            make-kommandoene
-          </Heading>
-          <p className="ep-meta__note">
-            Kjøres fra roten av meta-repoet. De fleste går via <code>meta exec</code> og hopper over meta-repoet selv.
-          </p>
-          <div className="ep-meta-cmds">
-            {COMMAND_GROUPS.map((g) => (
-              <section key={g.title} className="ep-meta-cmds__group" data-tone={g.tone} aria-label={g.title}>
-                <p className="ep-meta-cmds__title">
-                  <g.Icon aria-hidden />
-                  {g.title}
-                </p>
-                <ul>
-                  {g.commands.map((c) => (
-                    <li key={c.cmd} className="ep-meta-cmd">
-                      <CommandLine cmd={c.cmd} />
-                      <p className="ep-meta-cmd__text">{c.text}</p>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            ))}
-          </div>
-        </div>
-      </div>
+export function UpgradeFlows() {
+  return (
+    <div className="ep-meta-flows">
+      <figure className="ep-meta-flow" data-tone="warning" data-reveal>
+        <figcaption className="ep-meta-flow__head">
+          <span className="ep-meta-flow__title">Backend-bibliotekene</span>
+          <code>make upgrade-ep-libraries-part-1 … 8</code>
+        </figcaption>
+        <ol className="ep-meta-track">
+          {EP_UPGRADE.map((s, i) => (
+            <li key={i} className="ep-meta-track__step" style={vars({ "--i": i })}>
+              <span className="ep-meta-track__n">{i + 1}</span>
+              <span className="ep-meta-track__lib ep-mono">{s.lib}</span>
+              <span className="ep-meta-track__text">{s.text}</span>
+            </li>
+          ))}
+        </ol>
+        <p className="ep-meta-flow__note">
+          Rekkefølgen følger avhengighetene: ep-logging og ep-metrics brukes av de andre bibliotekene. Fra steg 4 puller
+          hvert steg, oppgraderer, pusher og ber deg vente til appene er deployet før neste.
+        </p>
+      </figure>
 
-      <div>
-        <Heading level="3" size="small" className="ep-meta__h">
-          Oppgradere bibliotekene
-        </Heading>
-        <div className="ep-meta-flows">
-          <figure className="ep-meta-flow" data-tone="warning" data-reveal>
-            <figcaption className="ep-meta-flow__head">
-              <span className="ep-meta-flow__title">Backend-bibliotekene</span>
-              <code>make upgrade-ep-libraries-part-1 … 8</code>
-            </figcaption>
-            <ol className="ep-meta-track">
-              {EP_UPGRADE.map((s, i) => (
-                <li key={i} className="ep-meta-track__step" style={vars({ "--i": i })}>
-                  <span className="ep-meta-track__n">{i + 1}</span>
-                  <span className="ep-meta-track__lib ep-mono">{s.lib}</span>
-                  <span className="ep-meta-track__text">{s.text}</span>
-                </li>
-              ))}
-            </ol>
-            <p className="ep-meta-flow__note">
-              Rekkefølgen følger avhengighetene: ep-logging og ep-metrics brukes av de andre bibliotekene. Fra steg 4 puller
-              hvert steg, oppgraderer, pusher og ber deg vente til appene er deployet før neste.
-            </p>
-          </figure>
-
-          <figure className="ep-meta-flow" data-tone="accent" data-reveal style={vars({ "--stagger": 1 })}>
-            <figcaption className="ep-meta-flow__head">
-              <span className="ep-meta-flow__title">Frontend-bibliotekene</span>
-              <code>script/bumpPackages.sh "melding" [major|minor|patch|wip] [wip]</code>
-            </figcaption>
-            <ol className="ep-meta-chain" aria-label="Rekkefølge">
-              {BUMP_ORDER.map((id, i) => (
-                <li key={id} style={vars({ "--i": i })}>
-                  <span className="ep-meta-chain__pkg ep-mono">{id}</span>
-                  {i < BUMP_ORDER.length - 1 && <ChevronRightIcon aria-hidden className="ep-meta-chain__arrow" />}
-                </li>
-              ))}
-            </ol>
-            <p className="ep-meta-flow__sub">For hver pakke:</p>
-            <ol className="ep-meta-pipe">
-              {BUMP_PIPELINE.map((p, i) => (
-                <li key={p} style={vars({ "--i": i })}>
-                  {p}
-                </li>
-              ))}
-            </ol>
-            <p className="ep-meta-flow__note">
-              Uten bump-type økes patch-versjonen. Med <code>wip</code> blir versjonen <code>-wipN</code> og publiseres med{" "}
-              <code>--tag wip</code>. Land-pakkene får også avhengighetene til hverandre oppdatert.{" "}
-              <code>script/bumpLandPackages.sh</code> gjør det samme for bare de tre land-pakkene. Krever <code>jq</code>.
-            </p>
-          </figure>
-        </div>
-      </div>
+      <figure className="ep-meta-flow" data-tone="accent" data-reveal style={vars({ "--stagger": 1 })}>
+        <figcaption className="ep-meta-flow__head">
+          <span className="ep-meta-flow__title">Frontend-bibliotekene</span>
+          <code>script/bumpPackages.sh "melding" [major|minor|patch|wip] [wip]</code>
+        </figcaption>
+        <ol className="ep-meta-chain" aria-label="Rekkefølge">
+          {BUMP_ORDER.map((id, i) => (
+            <li key={id} style={vars({ "--i": i })}>
+              <span className="ep-meta-chain__pkg ep-mono">{id}</span>
+              {i < BUMP_ORDER.length - 1 && <ChevronRightIcon aria-hidden className="ep-meta-chain__arrow" />}
+            </li>
+          ))}
+        </ol>
+        <p className="ep-meta-flow__sub">For hver pakke:</p>
+        <ol className="ep-meta-pipe">
+          {BUMP_PIPELINE.map((p, i) => (
+            <li key={p} style={vars({ "--i": i })}>
+              {p}
+            </li>
+          ))}
+        </ol>
+        <p className="ep-meta-flow__note">
+          Uten bump-type økes patch-versjonen. Med <code>wip</code> blir versjonen <code>-wipN</code> og publiseres med{" "}
+          <code>--tag wip</code>. Land-pakkene får også avhengighetene til hverandre oppdatert.{" "}
+          <code>script/bumpLandPackages.sh</code> gjør det samme for bare de tre land-pakkene. Krever <code>jq</code>.
+        </p>
+      </figure>
     </div>
   );
 }
@@ -267,7 +260,7 @@ function CommandLine({ cmd }: { cmd: string }) {
 }
 
 /** The meta repo on the left, the repos it lists on the right. */
-function MetaMap() {
+export function MetaMap() {
   const groups = CATEGORIES.map((c) => ({
     ...c,
     label: c.id === "bibliotek" ? "Biblioteker" : c.label,

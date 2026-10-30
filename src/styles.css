@@ -2132,22 +2132,96 @@ a.ep-apps-chip:focus-visible {
   color: var(--ax-text-neutral-subtle);
 }
 
-/* Meta repo */
-.ep-meta {
+/* Development page (meta repo) */
+.ep-dev .ep-arch-stats {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ep-dev-term-wrap {
+  display: grid;
+  place-items: center;
+}
+
+.ep-dev-term {
+  width: min(380px, 100%);
+  overflow: hidden;
+  border: 1px solid var(--ax-border-neutral-subtle);
+  border-radius: 14px;
+  background: var(--ax-bg-raised);
+  box-shadow: 0 30px 60px -36px var(--ax-bg-accent-strong);
+  animation: ep-float 7s ease-in-out infinite;
+}
+
+.ep-dev-term__bar {
   display: flex;
-  flex-direction: column;
-  gap: var(--ax-space-40);
+  align-items: center;
+  gap: 6px;
+  padding: var(--ax-space-8) var(--ax-space-12);
+  border-bottom: 1px solid var(--ax-border-neutral-subtle);
+  background: var(--ax-bg-neutral-soft);
 }
 
-.ep-meta__h {
-  margin: 0 0 var(--ax-space-12);
+.ep-dev-term__bar > span:not(.ep-dev-term__title) {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--ax-border-neutral);
 }
 
-.ep-meta__note {
-  margin: 0 0 var(--ax-space-12);
-  font-size: 0.875rem;
+.ep-dev-term__title {
+  margin-left: auto;
+  font-size: 0.7rem;
   color: var(--ax-text-neutral-subtle);
 }
+
+.ep-dev-term__body {
+  padding: var(--ax-space-16);
+  font-size: 0.8rem;
+}
+
+.ep-dev-term__line {
+  margin: 0 0 var(--ax-space-6);
+  white-space: nowrap;
+  animation: ep-dev-type 500ms steps(12, end) backwards;
+  animation-delay: calc(var(--i) * 550ms + 400ms);
+}
+
+@keyframes ep-dev-type {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+.ep-dev-term__prompt {
+  margin-right: 0.6em;
+  color: var(--ax-text-success);
+}
+
+.ep-dev-term__cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1em;
+  vertical-align: -0.15em;
+  background: var(--ax-text-neutral);
+  animation: ep-dev-blink 1.1s steps(1) infinite;
+}
+
+@keyframes ep-dev-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .ep-dev .ep-arch-stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Meta repo parts (src/components/MetaRepo.tsx) */
 
 .ep-meta-map {
   display: grid;
@@ -2379,36 +2453,23 @@ a.ep-apps-chip:focus-visible {
   }
 }
 
-.ep-meta__split {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
-  align-items: start;
-  gap: var(--ax-space-32);
-}
-
 .ep-meta-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr));
+  gap: var(--ax-space-16);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .ep-meta-step {
-  position: relative;
   display: grid;
   grid-template-columns: 32px minmax(0, 1fr);
   gap: var(--ax-space-12);
-  padding-bottom: var(--ax-space-20, 1.25rem);
-}
-
-.ep-meta-step:not(:last-child)::before {
-  content: "";
-  position: absolute;
-  left: 15px;
-  top: 36px;
-  bottom: 4px;
-  width: 2px;
-  border-radius: 2px;
-  background: var(--ax-border-neutral-subtle);
+  padding: var(--ax-space-16);
+  border: 1px solid var(--ax-border-neutral-subtle);
+  border-radius: 14px;
+  background: var(--ax-bg-raised);
 }
 
 .ep-meta-step__n {
@@ -2462,7 +2523,9 @@ a.ep-apps-chip:focus-visible {
 
 .ep-meta-cmds {
   display: grid;
-  gap: var(--ax-space-12);
+  grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr));
+  align-items: start;
+  gap: var(--ax-space-16);
 }
 
 .ep-meta-cmds__group {
@@ -2649,12 +2712,6 @@ a.ep-apps-chip:focus-visible {
   animation-delay: calc(var(--i) * 90ms + 250ms);
 }
 
-@media (max-width: 1000px) {
-  .ep-meta__split {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
-
 @media (max-width: 860px) {
   .ep-meta-map {
     grid-template-columns: minmax(0, 1fr);
@@ -2703,9 +2760,9 @@ a.ep-apps-chip:focus-visible {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ep-meta *,
-  .ep-meta *::before,
-  .ep-meta *::after {
+  .ep-dev *,
+  .ep-dev *::before,
+  .ep-dev *::after {
     animation: none !important;
     transition: none !important;
   }

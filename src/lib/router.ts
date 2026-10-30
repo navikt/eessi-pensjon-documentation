@@ -31,7 +31,14 @@ export function navigate(href: string) {
   }
   window.history.pushState(null, "", url);
   window.dispatchEvent(new Event(NAVIGATE_EVENT));
-  if (!url.hash) window.scrollTo({ top: 0 });
+  if (!url.hash) {
+    window.scrollTo({ top: 0 });
+    return;
+  }
+  // Wait for the new page to render before jumping to the anchor.
+  requestAnimationFrame(() =>
+    requestAnimationFrame(() => document.getElementById(decodeURIComponent(url.hash.slice(1)))?.scrollIntoView()),
+  );
 }
 
 /** Paths that must reach the server (Wonderwall or the Node server) as full page loads. */

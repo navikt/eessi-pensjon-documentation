@@ -8,6 +8,7 @@ import {
   GlobeIcon,
   HeartIcon,
   HouseIcon,
+  TerminalIcon,
 } from "@navikt/aksel-icons";
 
 export type NavItem = {
@@ -47,6 +48,12 @@ export const NAV_SECTIONS: NavSection[] = [
         label: "Applikasjoner",
         Icon: ComponentIcon,
         description: "Hver tjeneste og hvert bibliotek: ansvar, avhengigheter og hvor koden ligger.",
+      },
+      {
+        href: "/utvikling",
+        label: "Utvikling",
+        Icon: TerminalIcon,
+        description: "Meta-repoet, make-kommandoene og hvordan vi oppgraderer bibliotekene.",
       },
       {
         href: "/sed-og-buc",
