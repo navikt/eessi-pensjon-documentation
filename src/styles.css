@@ -14,6 +14,9 @@
   --ep-wide-max: 1180px;
   --ep-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
   --ep-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  /* Official EU flag colours (Reflex Blue, Yellow). Aksel has no matching yellow. */
+  --ep-eu-blue: #003399;
+  --ep-eu-yellow: #ffcc00;
 }
 
 * {
@@ -427,14 +430,17 @@ code {
 }
 
 .ep-brand__tile {
-  fill: var(--ax-bg-accent-strong);
+  fill: var(--ep-eu-blue);
 }
 
 .ep-brand__star {
-  fill: var(--ax-bg-warning-moderate);
+  fill: var(--ep-eu-yellow);
+  transform-box: view-box;
+  transform-origin: 0 0;
+  transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-/* The small hover animation: the ring of stars turns a twelfth of a lap. */
+/* The small hover animation: the ring turns a twelfth of a lap, the stars turn back to stay upright. */
 .ep-brand__ring {
   transform-box: view-box;
   transform-origin: 50% 50%;
@@ -443,6 +449,10 @@ code {
 
 .ep-brand:hover .ep-brand__ring {
   transform: rotate(30deg);
+}
+
+.ep-brand:hover .ep-brand__star {
+  transform: rotate(-30deg);
 }
 
 .ep-brand__text {
@@ -621,7 +631,8 @@ code {
     transition: none !important;
   }
 
-  .ep-brand:hover .ep-brand__ring {
+  .ep-brand:hover .ep-brand__ring,
+  .ep-brand:hover .ep-brand__star {
     transform: none;
   }
 }
@@ -5434,11 +5445,32 @@ html.dark .ep-map__node--external rect {
   font-size: 11px;
 }
 
+/* RINA is drawn as the EU flag: the whole box is EU blue with white text. */
+.ep-land__hero--eu .ep-land__box {
+  fill: var(--ep-eu-blue);
+}
+
+.ep-land__hero--eu .ep-land__hero-title,
+.ep-land__hero--eu .ep-land__hero-sub {
+  fill: #fff;
+}
+
+.ep-land__hero--eu .ep-land__hero-sub {
+  opacity: 0.8;
+}
+
+/* The ring turns slowly; each star turns back the same amount so it stays upright, as on the flag. */
 .ep-land__stars {
-  fill: var(--ax-border-warning);
   transform-box: view-box;
   transform-origin: 0 0;
   animation: ep-land-spin 80s linear infinite;
+}
+
+.ep-land__star {
+  fill: var(--ep-eu-yellow);
+  transform-box: view-box;
+  transform-origin: 0 0;
+  animation: ep-land-spin 80s linear infinite reverse;
 }
 
 .ep-land__links {

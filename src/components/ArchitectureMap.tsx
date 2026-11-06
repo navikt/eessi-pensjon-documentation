@@ -1,6 +1,7 @@
 import { useId, useLayoutEffect, useMemo, useRef, useState, type ComponentType, type CSSProperties, type KeyboardEvent, type SVGProps } from "react";
 import { ToggleGroup } from "@navikt/ds-react";
 import { GlobeIcon, PersonIcon } from "@navikt/aksel-icons";
+import { starPath, starRing } from "../lib/euFlag";
 import { EDGES, EXTERNALS, TOPICS, findApplication, type Tone as AppTone } from "../lib/applications";
 
 /*
@@ -522,7 +523,12 @@ export function ArchitectureMap() {
           </g>
 
           {HEROES.map((h) => (
-            <g key={h.id} className={`ep-land__node ep-land__hero ${nodeState(h.id)}`} data-tone={h.tone} {...nodeProps(h.id)}>
+            <g
+              key={h.id}
+              className={`ep-land__node ep-land__hero ${h.id === "rina" ? "ep-land__hero--eu" : ""} ${nodeState(h.id)}`}
+              data-tone={h.tone}
+              {...nodeProps(h.id)}
+            >
               <Hero hero={h} />
             </g>
           ))}
@@ -589,6 +595,14 @@ export function ArchitectureMap() {
   );
 }
 
+/**
+ * The EU flag on the RINA box: twelve upright five-point stars in a ring on EU blue.
+ * On the flag a star's outer radius is a sixth of the ring radius.
+ */
+const EU_RING_R = 20;
+const STAR_PATH = starPath(EU_RING_R / 6);
+const EU_STARS = starRing(EU_RING_R);
+
 function Hero({ hero: h }: { hero: HeroDef }) {
   const { x, y, w, h: height } = h.rect;
   const cx = x + w / 2;
@@ -601,10 +615,11 @@ function Hero({ hero: h }: { hero: HeroDef }) {
       {isRina ? (
         <g transform={`translate(${cx} ${y + 46})`} aria-hidden>
           <g className="ep-land__stars">
-            {Array.from({ length: 12 }, (_, i) => {
-              const a = (i / 12) * Math.PI * 2;
-              return <circle key={i} cx={Math.cos(a) * 18} cy={Math.sin(a) * 18} r={2.4} />;
-            })}
+            {EU_STARS.map(([sx, sy], i) => (
+              <g key={i} transform={`translate(${sx} ${sy})`}>
+                <path d={STAR_PATH} className="ep-land__star" />
+              </g>
+            ))}
           </g>
         </g>
       ) : (

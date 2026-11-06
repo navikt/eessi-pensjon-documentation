@@ -9,23 +9,25 @@ import {
   XMarkIcon,
 } from "@navikt/aksel-icons";
 import { NAV_SECTIONS, isActive, type NavItem } from "../lib/navigation";
+import { starPath, starRing } from "../lib/euFlag";
 import { usePathname } from "../lib/router";
 import { isDesktop, toggleCollapsed, useCollapsed, useDesktop } from "../lib/sidebar";
 import type { UserState } from "../lib/user";
 import { UserMenu } from "./UserMenu";
 
-/** Twelve stars in a ring, a quiet nod to the EU flag. The ring turns on hover. */
+/** The EU flag: twelve upright yellow stars on blue. The ring turns on hover; the stars stay upright. */
+const BRAND_STAR = starPath(2);
+const BRAND_RING = starRing(8.5, 16, 16);
+
 export function BrandMark({ className }: { className?: string }) {
-  const dots = Array.from({ length: 12 }, (_, i) => {
-    const a = (i / 12) * Math.PI * 2;
-    return { cx: 16 + Math.cos(a) * 8, cy: 16 + Math.sin(a) * 8 };
-  });
   return (
     <svg className={className} viewBox="0 0 32 32" aria-hidden focusable="false">
       <rect width="32" height="32" rx="9" className="ep-brand__tile" />
       <g className="ep-brand__ring">
-        {dots.map((d, i) => (
-          <circle key={i} cx={d.cx.toFixed(2)} cy={d.cy.toFixed(2)} r="1.55" className="ep-brand__star" />
+        {BRAND_RING.map(([x, y], i) => (
+          <g key={i} transform={`translate(${x} ${y})`}>
+            <path d={BRAND_STAR} className="ep-brand__star" />
+          </g>
         ))}
       </g>
     </svg>
